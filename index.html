@@ -3,162 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Acionamentos Munck (Locamunck)</title>
+    <title>Gestão de Acionamentos Munck - Engemaf</title>
     
-    <!-- 1. SCRIPT DE MODO ESCURO (CORRETO - DEVE VIR PRIMEIRO DE TUDO) -->
-    <!-- Deteta o tema salvo ou a preferência do SO e aplica a classe 'dark' ao <html> -->
     <script>
-        // Deteta o tema salvo ou a preferência do SO e aplica a classe 'dark' ao <html>
-        // ISTO TEM DE VIR ANTES DO TAILWIND CARREGAR, para que o JIT veja a classe 'dark'.
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
         }
     </script>
-    <!-- FIM DO SCRIPT DE MODO ESCURO -->
 
-    <!-- 2. Tailwind CSS CDN (DEVE VIR ANTES DA CONFIGURAÇÃO) -->
-    <!-- CORRIGIDO: Este script precisa ser carregado aqui -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- 3. Configuração do Tailwind (DEVE VIR DEPOIS DO SCRIPT CDN) -->
-    <!-- CORRIGIDO: Este script agora pode configurar o objeto 'tailwind' que já existe -->
     <script>
         tailwind.config = {
-            darkMode: 'class', // Habilita a estratégia de classe para o modo escuro
+            darkMode: 'class', 
         }
     </script>
 
-    <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- SCRIPT ANTIGO - REMOVIDO DESTA POSIÇÃO -->
-
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Cor de fundo agora é controlada pelo Tailwind no <main> */
         }
-        /* Aplica o 'color-scheme' para que o scrollbar e outros UIs do browser se adaptem */
         html.dark {
             color-scheme: dark;
         }
-
-        /* Estilo base do card, agora com fundo escuro */
         .card {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, background-color 0.2s ease;
-            /* bg-white dark:bg-gray-800 será aplicado via Tailwind */
         }
-        /* AZUL PREDOMINANTE: Cor principal da Via Cristais */
+        
+        /* Títulos e Cabeçalhos (Azul Escuro) */
         .primary-blue {
-             color: #0F2C67;
+             color: #0F2C67; 
         }
         .bg-primary-blue {
             background-color: #0F2C67;
         }
-        .hover-dark-blue:hover {
-            background-color: #0A1E4A;
+
+        /* Botões Principais (Vermelho Gradiente) */
+        .btn-gradient-red {
+            background-image: linear-gradient(to right, #EF4444 0%, #B91C1C 100%); /* red-500 -> red-700 */
+            color: white;
+            transition: all 0.3s ease;
+            background-size: 200% auto; /* Para efeito de transição do gradiente */
+        }
+        .btn-gradient-red:hover {
+             background-position: right center; /* Move o gradiente no hover */
+             box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
         }
 
-        /* Classes para responsividade da Tabela */
+        /* Botões de Sucesso (Verde) */
+        .btn-success {
+            background-color: #16A34A; /* green-600 */
+            color: white;
+            transition: background-color 0.2s ease;
+        }
+        .btn-success:hover {
+            background-color: #15803D; /* green-700 */
+        }
+
+        /* Botões de Perigo (Vermelho) */
+        .btn-danger {
+            background-color: #DC2626; /* red-600 */
+            color: white;
+            transition: background-color 0.2s ease;
+        }
+        .btn-danger:hover {
+            background-color: #B91C1C; /* red-700 */
+        }
+
+        /* Menu Lateral Ativo (Vermelho Claro) */
+        .sidebar-active {
+            background-color: #FEE2E2; /* red-100 */
+            color: #C53030; /* red-700 */
+        }
+        html.dark .sidebar-active {
+            background-color: #7f1d1d; /* dark:red-900 */
+            color: #F87171; /* dark:red-400 */
+        }
+
+
+        /* --- Outros Estilos --- */
         @media (max-width: 768px) {
-            /* Esconde o cabeçalho da tabela em telemóveis */
-            #container-tabela-historico .table-responsive thead {
-                display: none;
-            }
-            /* Transforma linhas em blocos */
+            #container-tabela-historico .table-responsive thead { display: none; }
             #container-tabela-historico .table-responsive tr {
-                display: block;
-                margin-bottom: 0.5rem;
-                border: 1px solid #e5e7eb;
-                border-radius: 0.5rem;
-                padding: 0.5rem;
-                /* Cor de fundo escura para a tabela responsiva */
-                background-color: white; 
+                display: block; margin-bottom: 0.5rem; border: 1px solid #e5e7eb;
+                border-radius: 0.5rem; padding: 0.5rem; background-color: white; 
             }
             html.dark #container-tabela-historico .table-responsive tr {
-                 background-color: #1f2937; /* dark:bg-gray-800 */
+                 background-color: #1f2937;
             }
-
-            /* Transforma células em blocos e alinha à direita */
             #container-tabela-historico .table-responsive td {
-                display: block;
-                text-align: right !important;
-                padding: 0.25rem 0.5rem;
-                position: relative;
-                font-size: 0.875rem;
+                display: block; text-align: right !important; padding: 0.25rem 0.5rem;
+                position: relative; font-size: 0.875rem;
             }
-            /* Adiciona o "data-label" (cabeçalho) antes do dado */
             #container-tabela-historico .table-responsive td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 0.5rem;
-                width: 50%;
-                padding-right: 10px;
-                white-space: nowrap;
-                text-align: left;
-                font-weight: 600;
+                content: attr(data-label); position: absolute; left: 0.5rem;
+                width: 50%; padding-right: 10px; white-space: nowrap;
+                text-align: left; font-weight: 600;
             }
-            #container-tabela-historico .table-responsive td:last-child {
-                border-bottom: none;
-            }
+            #container-tabela-historico .table-responsive td:last-child { border-bottom: none; }
         }
-        /* Estilo para garantir que o Modal fique acima de tudo */
-        .modal-overlay {
-            z-index: 1000;
-        }
-
-        /* Estilos para campos desativados no modal de edição */
+        .modal-overlay { z-index: 1000; }
+        
         #modalBody input:disabled, #modalBody select:disabled, #modalBody textarea:disabled {
-            background-color: #f3f4f6; /* bg-gray-100 */
-            cursor: not-allowed;
-            opacity: 0.7;
+            background-color: #f3f4f6; cursor: not-allowed; opacity: 0.7;
         }
         html.dark #modalBody input:disabled, 
         html.dark #modalBody select:disabled, 
         html.dark #modalBody textarea:disabled {
-            background-color: #374151; /* dark:bg-gray-700 */
+            background-color: #374151;
         }
-
-
-        /* Estilo para a mensagem de erro no modal de senha */
-        #passwordError {
-            display: none; /* Escondido por padrão */
-        }
-
-        /* Estilos para o botão de toggle ativo/inativo */
-        .toggle-btn {
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
+        #passwordError { display: none; }
+        .toggle-btn { transition: background-color 0.2s ease, color 0.2s ease; }
     </style>
 </head>
-<body class="bg-white dark:bg-gray-800"> <!-- Cor de fundo base -->
-    <!-- Overlay de Carregamento -->
+<body class="bg-white dark:bg-gray-800">
     <div id="loadingOverlay" class="fixed inset-0 bg-white dark:bg-gray-900 flex items-center justify-center z-50">
         <div class="flex flex-col items-center">
             <svg class="animate-spin -ml-1 mr-3 h-8 w-8 primary-blue dark:text-blue-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8
-0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             <p class="mt-4 text-lg primary-blue dark:text-blue-300">Carregando dados e autenticando...</p>
         </div>
     </div>
 
-    <!-- NOVO: Container de Login -->
     <div id="loginContainer" class="min-h-screen flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-900 hidden">
         <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-8">
             <img src="https://viacristais.com.br/wp-content/themes/viacristais/resources/images/logo-topo.png" alt="Logo Via Cristais" class="h-24 mx-auto mb-6" onerror="this.onerror=null;this.style.display='none';">
             
-            <!-- TÍTULO ADICIONADO -->
             <h1 class="text-xl text-center font-bold text-gray-700 dark:text-gray-200 mb-4 -mt-2">
-                Gestão de Acionamentos Munck - Locamunck
+                Gestão de Acionamentos Munck - Engemaf
             </h1>
-            <!-- FIM TÍTULO -->
             
-            <!-- TABS -->
             <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
                 <nav class="flex space-x-1" aria-label="Tabs">
                     <button id="tabLogin" class="px-4 py-2 font-medium text-sm rounded-t-lg">Entrar</button>
@@ -166,42 +147,39 @@
                 </nav>
             </div>
 
-            <!-- Formulário de Login -->
             <form id="loginForm">
                 <div class="space-y-4">
                     <div>
                         <label for="loginEmail" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                        <input type="email" id="loginEmail" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-blue focus:ring-primary-blue p-2">
+                        <input type="email" id="loginEmail" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2">
                     </div>
                     <div>
                         <label for="loginPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Senha</label>
-                        <input type="password" id="loginPassword" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-blue focus:ring-primary-blue p-2">
+                        <input type="password" id="loginPassword" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2">
                     </div>
                 </div>
                 <p id="authError" class="text-red-500 text-sm mt-4 hidden"></p>
                 <div class="mt-6">
-                    <button type="submit" id="loginButton" class="w-full bg-primary-blue text-white py-2 px-6 rounded-md hover-dark-blue transition duration-150 ease-in-out font-semibold shadow-md">
+                    <button type="submit" id="loginButton" class="w-full btn-gradient-red py-2 px-6 rounded-md font-semibold shadow-md">
                         Entrar
                     </button>
                 </div>
             </form>
 
-            <!-- Formulário de Registo -->
             <form id="registerForm" class="hidden">
                 <div class="space-y-4">
                     <div>
                         <label for="registerEmail" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                        <input type="email" id="registerEmail" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-blue focus:ring-primary-blue p-2">
+                        <input type="email" id="registerEmail" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2">
                     </div>
                     <div>
                         <label for="registerPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Senha (mínimo 6 caracteres)</label>
-                        <input type="password" id="registerPassword" required minlength="6" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-blue focus:ring-primary-blue p-2">
+                        <input type="password" id="registerPassword" required minlength="6" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2">
                     </div>
                 </div>
-                 <!-- MODIFICADO: Mensagem de erro/sucesso para registo -->
                  <p id="registerError" class="text-sm mt-4 hidden"></p>
                 <div class="mt-6">
-                    <button type="submit" id="registerButton" class="w-full bg-green-600 text-white py-2 px-6 rounded-md hover:bg-green-700 transition duration-150 ease-in-out font-semibold shadow-md">
+                    <button type="submit" id="registerButton" class="w-full btn-success py-2 px-6 rounded-md font-semibold shadow-md">
                         Criar Conta
                     </button>
                 </div>
@@ -209,57 +187,47 @@
         </div>
     </div>
 
-    <!-- NOVO: Container Principal do App (Layout Flex) -->
     <div id="appContainer" class="flex min-h-screen hidden">
         
-        <!-- NOVO: Sidebar (Menus à Esquerda) -->
-        <!-- CORREÇÃO: Adicionado id="sidebar" para que o JS encontre os botões -->
         <aside id="sidebar" class="w-64 flex-shrink-0 bg-white dark:bg-gray-800 shadow-lg flex flex-col z-10">
-            <!-- LOGO (Maior, no topo da sidebar) -->
             <div class="p-6 flex justify-center border-b border-gray-200 dark:border-gray-700">
                 <img src="https://viacristais.com.br/wp-content/themes/viacristais/resources/images/logo-topo.png" alt="Logo Via Cristais" class="h-20" onerror="this.onerror=null;this.style.display='none';">
             </div>
 
-            <!-- Navegação (Menus) -->
             <nav class="flex-1 flex flex-col space-y-2 p-4">
                 <button onclick="switchView('registro')" id="tab-registro" class="flex items-center space-x-3 w-full text-left px-4 py-3 rounded-lg font-medium transition duration-150 ease-in-out">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                     <span>📝 Registo</span>
                 </button>
                 <button onclick="switchView('historico')" id="tab-historico" class="flex items-center space-x-3 w-full text-left px-4 py-3 rounded-lg font-medium transition duration-150 ease-in-out">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>🕰️ Histórico</span>
                 </button>
                 <button onclick="switchView('dashboard')" id="tab-dashboard" class="flex items-center space-x-3 w-full text-left px-4 py-3 rounded-lg font-medium transition duration-150 ease-in-out">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
                     <span>📊 Dashboard</span>
                 </button>
                 <button onclick="switchView('localizacao')" id="tab-localizacao" class="flex items-center space-x-3 w-full text-left px-4 py-3 rounded-lg font-medium transition duration-150 ease-in-out">
-                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     <span>📍 Localizações</span>
                 </button>
             </nav>
 
-            <!-- NOVO: Toggle Modo Escuro -->
             <div class="mt-auto p-4 border-t border-gray-200 dark:border-gray-700">
                 <button id="darkModeToggle" class="w-full flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-150">
-                    <!-- Ícone Sol (Modo Claro) -->
-                    <svg id="icon-sun" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <!-- Ícone Lua (Modo Escuro) -->
-                    <svg id="icon-moon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    <svg id="icon-sun" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="icon-moon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     <span class="ml-2">Mudar Tema</span>
                 </button>
             </div>
             
-            <!-- NOVO: Botão de Logout -->
             <div class="p-4 border-t border-gray-200 dark:border-gray-700">
                 <button id="logoutButton" class="w-full flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-700 transition duration-150">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     <span class="ml-2">Sair (Logout)</span>
                 </button>
             </div>
 
-            <!-- ID do Utilizador -->
             <div class="p-4 text-center border-t border-gray-200 dark:border-gray-700">
                 <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
                     Utilizador: <span id="userIdDisplay" class="font-mono text-xs bg-gray-100 dark:bg-gray-700 p-1 rounded"></span>
@@ -267,122 +235,98 @@
             </div>
         </aside>
 
-        <!-- NOVO: Container do Conteúdo Principal (Scrollável) -->
         <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- NOVO: Cabeçalho do Conteúdo (Apenas Título) -->
             <header class="bg-white dark:bg-gray-800 shadow-sm p-4 z-0">
                  <h1 class="text-2xl md:text-3xl font-bold primary-blue dark:text-gray-100">
-                     Gestão de Acionamentos Munck - Locamunck
+                     Gestão de Acionamentos Munck - Engemaf
                  </h1>
             </header>
             
-            <!-- Conteúdo Principal (onde as views são trocadas) -->
-            <!-- CORREÇÃO: Alterado bg-f0f4f8 para bg-gray-100 (cor padrão do Tailwind) -->
             <main class="flex-1 overflow-y-auto p-6 bg-gray-100 dark:bg-gray-900">
-                <!-- View de Registro -->
                 <div id="view-registro" class="card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-semibold primary-blue dark:text-blue-300 mb-4">Novo Acionamento</h2>
 
-                    <!-- NOVO BLOCO DE STATUS DO CAMINHÃO -->
                     <div id="statusCaminhaoDisplay" class="hidden mb-6 p-4 bg-blue-50 dark:bg-blue-900 border-l-4 border-blue-500 dark:border-blue-700 rounded-lg shadow-md">
                         <div class="flex items-start">
-                            <svg class="w-6 h-6 text-blue-700 dark:text-blue-300 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <svg class="w-6 h-6 text-blue-700 dark:text-blue-300 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <div class="flex-1">
                                 <p class="text-sm font-medium text-blue-700 dark:text-blue-300" id="statusCaminhaoTitle">Status Atual do Caminhão:</p>
                                 <div id="containerLocaisAtuais" class="mt-3 space-y-3">
-                                    <!-- Conteúdo injetado via JS -->
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- FIM DO BLOCO DE STATUS -->
 
                     <form id="formAcionamento">
                         <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
-                            <!-- Data -->
                             <div>
                                 <label for="data" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data do Acionamento</label>
-                                <input type="date" id="data" name="data" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-blue focus:ring-primary-blue p-2">
+                                <input type="date" id="data" name="data" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2">
                             </div>
-                            <!-- Solicitante -->
                             <div>
                                 <label for="solicitante" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Solicitante</label>
-                                <select id="solicitante" name="solicitante" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-blue focus:ring-primary-blue p-2">
+                                <select id="solicitante" name="solicitante" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2">
                                     <option value="" disabled selected>Selecione o Solicitante</option>
                                 </select>
                             </div>
-                            <!-- Local -->
                             <div>
                                 <label for="local" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Local (Ponto - Cidade)</label>
-                                <select id="local" name="local" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-blue focus:ring-primary-blue p-2">
+                                <select id="local" name="local" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2">
                                     <option value="" disabled selected>Selecione o Local</option>
                                 </select>
                             </div>
-                             <!-- Chamado GLPI -->
                              <div>
                                 <label for="chamadoGLPI" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Chamado GLPI</label>
-                                <input type="text" id="chamadoGLPI" name="chamadoGLPI" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-blue focus:ring-primary-blue p-2" placeholder="Ex: C0000000">
+                                <input type="text" id="chamadoGLPI" name="chamadoGLPI" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2" placeholder="Ex: C0000000">
                             </div>
-                            <!-- OS Locamunck -->
                             <div>
-                                <label for="osLocamunck" class="block text-sm font-medium text-gray-700 dark:text-gray-300">OS Locamunck</label>
-                                <input type="text" id="osLocamunck" name="osLocamunck" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-blue focus:ring-primary-blue p-2" placeholder="Opcional">
+                                <label for="osLocamunck" class="block text-sm font-medium text-gray-700 dark:text-gray-300">OS Engemaf</label>
+                                <input type="text" id="osLocamunck" name="osLocamunck" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2" placeholder="Opcional">
                             </div>
                         </div>
                         
-                        <!-- CAMPO: Observação -->
                         <div class="mt-6">
                             <label for="observacao" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Observação (Opcional)</label>
-                            <textarea id="observacao" name="observacao" rows="3" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-blue focus:ring-primary-blue p-2" placeholder="Descreva a atividade ou qualquer nota relevante..."></textarea>
+                            <textarea id="observacao" name="observacao" rows="3" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2" placeholder="Descreva a atividade..."></textarea>
                         </div>
 
                         <div class="mt-6 flex justify-end">
-                            <button type="submit" id="submitButton" disabled class="w-full md:w-auto bg-primary-blue text-white py-2 px-6 rounded-md hover-dark-blue transition duration-150 ease-in-out font-semibold shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed">
+                            <button type="submit" id="submitButton" disabled class="w-full md:w-auto btn-gradient-red py-2 px-6 rounded-md font-semibold shadow-md disabled:bg-gray-400 disabled:bg-none disabled:shadow-none disabled:cursor-not-allowed">
                                 Aguardando autenticação...
                             </button>
                         </div>
                     </form>
                 </div>
 
-                <!-- View de Histórico (MODIFICADA) -->
                 <div id="view-historico" class="card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg hidden">
-                    <!-- CABEÇALHO DA VIEW HISTÓRICO -->
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <h2 class="text-2xl font-semibold primary-blue dark:text-blue-300">Histórico de Acionamentos</h2>
                         
                         <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 items-center w-full md:w-auto">
-                            <!-- Filtro de Mês -->
                             <div class="flex items-center w-full md:w-auto">
                                 <label for="selectMonthFilter" class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">Mês:</label>
-                                <select id="selectMonthFilter" class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-blue focus:ring-primary-blue p-2 text-sm w-full md:w-auto">
-                                    <!-- Opções de meses serão preenchidas via JS -->
+                                <select id="selectMonthFilter" class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2 text-sm w-full md:w-auto">
                                 </select>
                             </div>
 
-                            <!-- Toggle de Visualização (Cartões/Lista) -->
                             <div class="flex rounded-md shadow-sm">
-                                <button id="btn-view-cards" onclick="toggleHistoricoView('cards')" class="toggle-btn relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 text-sm font-medium bg-primary-blue text-white">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                <button id="btn-view-cards" onclick="toggleHistoricoView('cards')" class="toggle-btn relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 text-sm font-medium btn-danger text-white">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                                 </button>
                                 <button id="btn-view-lista" onclick="toggleHistoricoView('lista')" class="toggle-btn -ml-px relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                                 </button>
                             </div>
                             
-                            <!-- Botão de Exportar -->
-                            <button onclick="exportToCSV()" class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-150 ease-in-out font-semibold text-sm shadow-md flex items-center w-full md:w-auto justify-center">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <button onclick="exportToCSV()" class="btn-success py-2 px-4 rounded-md text-sm font-semibold shadow-md flex items-center w-full md:w-auto justify-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                 Exportar CSV
                             </button>
                         </div>
                     </div>
 
-                    <!-- Container para Visualização em CARTÕES -->
-                    <div id="listaAcionamentos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Cartões serão inseridos aqui via JS -->
-                    </div>
+                    <div id="listaAcionamentos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-                    <!-- Container para Visualização em LISTA (Tabela) -->
                     <div id="container-tabela-historico" class="overflow-x-auto hidden">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 table-responsive">
                             <thead class="bg-gray-50 dark:bg-gray-700">
@@ -392,7 +336,7 @@
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Local</th>
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Motorista</th>
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Chamado GLPI</th>
-                                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">OS Locamunck</th>
+                                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">OS Engemaf</th>
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Km</th>
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Horas</th>
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Valor (R$)</th>
@@ -401,17 +345,14 @@
                                 </tr>
                             </thead>
                             <tbody id="listaAcionamentosTabela" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                <!-- Linhas (TRs) serão inseridas aqui via JS -->
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- View de Dashboard -->
                 <div id="view-dashboard" class="card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg hidden">
                     <h2 class="text-2xl font-semibold primary-blue dark:text-blue-300 mb-4">Dashboard de Custos e Análises</h2>
 
-                    <!-- Resumo Financeiro (Período Filtrado) -->
                     <div class="mb-8">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Resumo Financeiro do Período (Mês Selecionado)</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -430,7 +371,6 @@
                         </div>
                     </div>
 
-                    <!-- Resumo Financeiro Geral (Todos os Acionamentos) -->
                     <div class="mb-8 pt-4 border-t dark:border-gray-700">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Resumo Financeiro Geral (Todos os Acionamentos)</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -449,18 +389,15 @@
                         </div>
                     </div>
 
-                    <!-- Análise de Frequência (Baseada no Período) -->
                     <div class="pt-4 border-t dark:border-gray-700">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Análise de Frequência (Período Selecionado)</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Top Locais Solicitantes -->
                             <div class="card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                                 <h4 class="text-lg font-medium primary-blue dark:text-blue-300 mb-2">Top Locais Solicitantes</h4>
                                 <div id="rankingLocais" class="space-y-2">
                                     <p class="text-gray-500 dark:text-gray-400 text-sm">Nenhum dado para o período.</p>
                                 </div>
                             </div>
-                            <!-- Top Solicitantes por Frequência -->
                             <div class="card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                                 <h4 class="text-lg font-medium primary-blue dark:text-blue-300 mb-2">Top Solicitantes por Frequência</h4>
                                 <div id="rankingSolicitantes" class="space-y-2">
@@ -469,129 +406,97 @@
                             </div>
                         </div>
                     </div>
-                </div> <!-- FIM DA view-dashboard -->
-
-                <!-- VIEW DE LOCALIZAÇÃO -->
-                <div id="view-localizacao" class="card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg hidden">
+                </div> <div id="view-localizacao" class="card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg hidden">
                     <h2 class="text-2xl font-semibold primary-blue dark:text-blue-300 mb-4">Localização das Unidades (PPs e SAUs)</h2>
                     <div id="localizacaoContent" class="space-y-6">
-                        <!-- Conteúdo será gerado via JS -->
-                    </div>
+                        </div>
                 </div>
-            </main> <!-- FIM do main (scrollável) -->
-        </div> <!-- FIM do container de conteúdo principal -->
-    </div> <!-- FIM do appContainer (flex) -->
+            </main>
+        </div>
+    </div>
 
-    <!--
-    ============================================================
-    MODAIS (Movidos para fora do appContainer para z-index)
-    ============================================================
-    -->
-
-    <!-- Modal Genérico (Usado para Visualizar OS e Edição) -->
     <div id="modal" class="modal-overlay fixed inset-0 bg-gray-600 bg-opacity-75 hidden items-center justify-center p-4" onclick="closeModal(event)">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-lg overflow-hidden" onclick="event.stopPropagation()">
             <div class="p-5 border-b dark:border-gray-700 flex justify-between items-center">
                 <h3 id="modalTitle" class="text-xl font-semibold primary-blue dark:text-blue-300">Título do Modal</h3>
                 <button onclick="closeModal()" class="text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            
-            <div id="modalBody" class="p-5">
-                <!-- Conteúdo dinâmico aqui (OS ou Formulário de Edição) -->
-            </div>
-            
-            <div id="modalFooter" class="p-5 bg-gray-50 dark:bg-gray-700/50 flex justify-end space-x-3">
-                <!-- Botões dinâmicos aqui (o botão Fechar padrão foi movido para o JS) -->
-            </div>
+            <div id="modalBody" class="p-5"></div>
+            <div id="modalFooter" class="p-5 bg-gray-50 dark:bg-gray-700/50 flex justify-end space-x-3"></div>
         </div>
     </div>
 
-    <!-- Modal de Notificação (Para sucesso no registro) -->
     <div id="notificationModal" class="modal-overlay fixed inset-0 bg-gray-600 bg-opacity-75 hidden items-center justify-center p-4" onclick="closeModal(event, 'notificationModal')">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-sm overflow-hidden" onclick="event.stopPropagation()">
             <div class="p-5 flex flex-col items-center">
-                <svg class="w-12 h-12 text-green-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <svg class="w-12 h-12 text-green-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Acionamento Registado!</h3>
                 <p class="text-center text-sm text-gray-600 dark:text-gray-300">
                     O novo acionamento foi guardado com sucesso no status **Aberto**.
                     <br><br>
-                    Por favor, verifique e complete os dados de Motorista, Horas e Km no separador **Histórico** para finalizar a OS.
+                    Por favor, verifique e complete os dados no separador **Histórico**.
                 </p>
             </div>
             <div class="p-5 bg-gray-50 dark:bg-gray-700/50 flex justify-center">
-                <button onclick="closeModal(null, 'notificationModal'); switchView('historico')" class="px-4 py-2 bg-primary-blue text-white rounded-md hover-dark-blue transition duration-150 font-semibold">
+                <button onclick="closeModal(null, 'notificationModal'); switchView('historico')" class="btn-gradient-red px-4 py-2 rounded-md font-semibold">
                     Ir para Histórico
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Confirmação Genérico (para Encerramento e Deleção) -->
     <div id="confirmationModal" class="modal-overlay fixed inset-0 bg-gray-600 bg-opacity-75 hidden items-center justify-center p-4" onclick="closeModal(event, 'confirmationModal')">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-sm overflow-hidden" onclick="event.stopPropagation()">
             <div class="p-5 flex flex-col items-center">
-                <div id="confirmationModalIcon" class="mb-3">
-                    <!-- Ícone dinâmico aqui -->
-                </div>
+                <div id="confirmationModalIcon" class="mb-3"></div>
                 <h3 id="confirmationModalTitle" class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Confirmar Ação?</h3>
-                <p id="confirmationModalMessage" class="text-center text-sm text-gray-600 dark:text-gray-300">
-                    <!-- Mensagem dinâmica aqui -->
-                </p>
+                <p id="confirmationModalMessage" class="text-center text-sm text-gray-600 dark:text-gray-300"></p>
             </div>
             <div id="confirmationModalFooter" class="p-5 bg-gray-50 dark:bg-gray-700/50 flex justify-center space-x-3">
-                <!-- Botões dinâmicos aqui -->
             </div>
         </div>
     </div>
 
-    <!-- Modal de Senha para Exclusão Final -->
     <div id="passwordModal" class="modal-overlay fixed inset-0 bg-gray-600 bg-opacity-75 hidden items-center justify-center p-4" onclick="closeModal(event, 'passwordModal')">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-sm overflow-hidden" onclick="event.stopPropagation()">
-            <input type="hidden" id="deleteIdStorage"> <!-- Armazena o ID a ser deletado -->
+            <input type="hidden" id="deleteIdStorage">
             <div class="p-5 border-b dark:border-gray-700 flex justify-between items-center">
                 <h3 class="text-xl font-semibold text-red-700">Exclusão Definitiva</h3>
                 <button onclick="closeModal(null, 'passwordModal')" class="text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <div class="p-5">
-                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Digite a senha para confirmar a exclusão permanente deste acionamento:</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Digite a senha para confirmar a exclusão permanente:</p>
                 <input type="password" id="passwordInput" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2 mb-2" placeholder="Senha">
                 <p id="passwordError" class="text-xs text-red-600">Senha incorreta!</p>
             </div>
             <div class="p-5 bg-gray-50 dark:bg-gray-700/50 flex justify-end space-x-3">
-                <button id="confirmPasswordDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-150 font-semibold">Confirmar Exclusão</button>
+                <button id="confirmPasswordDeleteBtn" class="btn-danger px-4 py-2 rounded-md font-semibold">Confirmar Exclusão</button>
                 <button onclick="closeModal(null, 'passwordModal')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition duration-150">Cancelar</button>
             </div>
         </div>
     </div>
 
 
-    <!--
-    ============================================================
-    SCRIPTS (No final do body)
-    ============================================================
-    -->
     <script>
-      // Bloco de configuração do Firebase (sem alterações)
       const __firebase_config = JSON.stringify({
-        apiKey: "AIzaSyBErspPmi6mAw4RouFBLjfyEy_1u7XLQDk",
-        authDomain: "locamunck-4604a.firebaseapp.com",
-        projectId: "locamunck-4604a",
-        storageBucket: "locamunck-4604a.firebasestorage.app",
-        messagingSenderId: "567670085107",
-        appId: "1:567670085107:web:3a7f7f1aa7580184ad2e86"
+        apiKey: "AIzaSyB3Avyw3eO0clkjI2Nr-Z1ZBvGwUxPqV9Y",
+        authDomain: "engemaf.firebaseapp.com",
+        projectId: "engemaf",
+        storageBucket: "engemaf.firebasestorage.app",
+        messagingSenderId: "467162710119",
+        appId: "1:467162710119:web:3d2bf99ec41897e27c54c2"
       });
-      const __app_id = "locamunck-4604a";
+      // MODIFICADO: O __app_id deve corresponder ao seu projectId.
+      const __app_id = "engemaf";
       const __initial_auth_token = null;
     </script>
-
     <script type="module">
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        // MODIFICADO: Adicionado 'sendEmailVerification' e removidos 'signInAnonymously' e 'signInWithCustomToken'
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, orderBy, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
@@ -600,20 +505,17 @@
         let userId = null;
         let acionamentosData = [];
         let currentView = 'registro';
-        let currentMonthFilter = new Date().toISOString().substring(0, 7); // yyyy-mm
+        let currentMonthFilter = new Date().toISOString().substring(0, 7);
         let isAuthReady = false;
-        let historicoViewMode = 'cards'; // 'cards' ou 'lista'
-        let firestoreUnsubscribe = null; // NOVO: Para desligar o listener no logout
+        let historicoViewMode = 'cards';
+        let firestoreUnsubscribe = null;
 
-        // --------------------------
-        // Constantes e Regras de Negócio
-        // --------------------------
-        const HOUR_RATE = 370.00; // R$ 370,00
-        const KM_RATE = 12.50; // R$ 12,50
+        // --- Constantes e Regras de Negócio ---
+        const HOUR_RATE = 370.00;
+        const KM_RATE = 12.50;
         const NOTIFICATION_EMAIL = 'sidney.matos@vinci@highways.com.br';
-        const DELETE_PASSWORD = '020391'; // SENHA PARA EXCLUSÃO FINAL
+        const DELETE_PASSWORD = '020391';
 
-        // DEFINIÇÃO DOS STATUS
         const STATUSES = {
             ABERTO: 'Aberto',
             EM_EXECUCAO: 'Em Execução',
@@ -621,9 +523,7 @@
             CANCELADO: 'Cancelado'
         };
 
-        // CONSTANTE COM DADOS DE GEOLOCALIZAÇÃO
         const LOCAIS_GEOLOCALIZACAO = [
-            // SAUs
             { nome: 'SAU 01', cidade: 'Cristalina', km: 'km 96', latDMS: '17 0 25.44 S', lonDMS: '47 17 20.44 W' },
             { nome: 'SAU 02', cidade: 'Cristalina', km: 'km 148', latDMS: '17 00 25.33 S', lonDMS: '47 13 22.33 W' },
             { nome: 'SAU 03', cidade: 'Paracatu', km: 'km 43', latDMS: '17 13 34.69 S', lonDMS: '46 51 39.05 W' },
@@ -638,7 +538,6 @@
             { nome: 'SAU 12', cidade: 'Caetanopolis', km: 'km 448', latDMS: '19 18 02.04 S', lonDMS: '44 22 43.29 W' },
             { nome: 'SAU 13', cidade: 'Capim Branco', km: 'km 488', latDMS: '19 36 30.44 S', lonDMS: '44 13 07.36 W' },
             { nome: 'SAU 14', cidade: 'Contagem', km: 'km 525', latDMS: '19 53 08.94 S', lonDMS: '44 03 02.27 W' },
-            // PPs
             { nome: 'PP 01', cidade: 'Paracatu', km: 'km 17', latDMS: '17 05 53.64 S', lonDMS: '47 01 35.35 W' },
             { nome: 'PP 02', cidade: 'Lagoa Grande', km: 'km 91', latDMS: '17 30 21.33 S', lonDMS: '46 33 53.14 W' },
             { nome: 'PP 03', cidade: 'João Pinheiro', km: 'km 173', latDMS: '17 56 43.96 S', lonDMS: '46 02 15.36 W' },
@@ -647,33 +546,21 @@
             { nome: 'PP 06', cidade: 'Curvelo', km: 'km 405', latDMS: '19 04 45.60 S', lonDMS: '44 39 18.89 W' },
             { nome: 'PP 07', cidade: 'Capim Branco', km: 'km 487', latDMS: '19 36 04.75 S', lonDMS: '44 13 19.12 W' },
         ];
-
-
-        // Função de ordenação: PP antes de SAU
         const sortLocais = (locais) => {
             return locais.sort((a, b) => {
-                const isAPP = a.nome.startsWith('PP');
-                const isBPP = b.nome.startsWith('PP');
-                if (isAPP && !isBPP) return -1;
-                if (!isAPP && isBPP) return 1;
+                const isAPP = a.nome.startsWith('PP'); const isBPP = b.nome.startsWith('PP');
+                if (isAPP && !isBPP) return -1; if (!isAPP && isBPP) return 1;
                 const numA = parseInt(a.nome.substring(a.nome.indexOf(' ') + 1));
                 const numB = parseInt(b.nome.substring(b.nome.indexOf(' ') + 1));
                 return numA - numB;
             }).map(l => ({nome: l.nome, cidade: l.cidade}));
         };
-
         const LOCAIS = sortLocais(LOCAIS_GEOLOCALIZACAO.map(l => ({nome: l.nome, cidade: l.cidade})));
-
-        // SOLICITANTES
         const SOLICITANTES = [
-            'Ramon Paixão - Trecho 1',
-            'Roberto Faria - Trecho 2',
-            'Sidiney Melo - Trecho 3'
+            'Ramon Paixão - Trecho 1', 'Roberto Faria - Trecho 2', 'Sidiney Melo - Trecho 3'
         ];
 
-        // --------------------------
-        // Elementos do DOM
-        // --------------------------
+        // --- Elementos do DOM ---
         const loadingOverlay = document.getElementById('loadingOverlay');
         const appContainer = document.getElementById('appContainer');
         const userIdDisplay = document.getElementById('userIdDisplay');
@@ -690,7 +577,6 @@
         const modalBody = document.getElementById('modalBody');
         const modalFooter = document.getElementById('modalFooter');
         const submitButton = document.getElementById('submitButton');
-        // NOVO: Elementos do Login
         const loginContainer = document.getElementById('loginContainer');
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
@@ -701,76 +587,51 @@
         const tabLogin = document.getElementById('tabLogin');
         const tabRegister = document.getElementById('tabRegister');
         const logoutButton = document.getElementById('logoutButton');
-        // NOVO: Elementos do Modo Escuro
         const darkModeToggle = document.getElementById('darkModeToggle');
         const iconSun = document.getElementById('icon-sun');
         const iconMoon = document.getElementById('icon-moon');
 
-
-        // --------------------------
-        // Funções Utilitárias
-        // --------------------------
-
+        // --- Funções Utilitárias ---
         function formatCurrency(value) {
             return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
         }
-
         function formatDate(date) {
             if (!date) return '';
             const d = date instanceof Date ? date : (date.toDate ? date.toDate() : new Date(date));
             return d.toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit' });
         }
-
         function calcularCustoTotal(horas, km) {
-            const h = parseFloat(horas) || 0;
-            const k = parseFloat(km) || 0;
-            const custoHoras = h * HOUR_RATE;
-            const custoKm = k * KM_RATE;
-            return custoHoras + custoKm;
+            const h = parseFloat(horas) || 0; const k = parseFloat(km) || 0;
+            return (h * HOUR_RATE) + (k * KM_RATE);
         }
-
         function getCollectionRef() {
-            if (!db) {
-                console.warn("getCollectionRef foi chamada mas db está em falta.");
-                return null;
-            }
+            if (!db) { console.warn("getCollectionRef foi chamada mas db está em falta."); return null; }
             const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
             return collection(db, 'artifacts', appId, 'public', 'data', 'acionamentos');
         }
 
-        // --------------------------
-        // Funções de Inicialização UI
-        // --------------------------
-
+        // --- Funções de Inicialização UI ---
         function initializeLocaisDropdowns() {
-            const selectLocal = document.getElementById('local');
-            if (!selectLocal) return;
+            const selectLocal = document.getElementById('local'); if (!selectLocal) return;
             selectLocal.innerHTML = '<option value="" disabled selected>Selecione o Local</option>';
             LOCAIS.forEach(local => {
                 const displayValue = `${local.nome} - ${local.cidade}`;
                 const option = document.createElement('option');
-                option.value = displayValue;
-                option.textContent = displayValue;
+                option.value = displayValue; option.textContent = displayValue;
                 selectLocal.appendChild(option);
             });
         }
-
         function initializeSolicitantesDropdowns() {
-            const selectSolicitante = document.getElementById('solicitante');
-            if (!selectSolicitante) return;
+            const selectSolicitante = document.getElementById('solicitante'); if (!selectSolicitante) return;
             selectSolicitante.innerHTML = '<option value="" disabled selected>Selecione o Solicitante</option>';
             SOLICITANTES.forEach(solicitante => {
                 const option = document.createElement('option');
-                option.value = solicitante;
-                option.textContent = solicitante;
+                option.value = solicitante; option.textContent = solicitante;
                 selectSolicitante.appendChild(option);
             });
         }
-
         function initializeMonthFilter() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth();
+            const now = new Date(); const year = now.getFullYear(); const month = now.getMonth();
             const options = [];
             for (let i = 0; i < 6; i++) {
                 const d = new Date(year, month - i, 1);
@@ -781,54 +642,33 @@
             selectMonthFilter.innerHTML = options.join('');
             selectMonthFilter.value = currentMonthFilter;
         }
-
-        // NOVO: Função para inicializar o Toggle de Modo Escuro
         function initializeDarkModeToggle() {
             const updateIcons = (isDark) => {
-                if (isDark) {
-                    iconSun.classList.add('hidden');
-                    iconMoon.classList.remove('hidden');
-                } else {
-                    iconSun.classList.remove('hidden');
-                    iconMoon.classList.add('hidden');
-                }
+                if (isDark) { iconSun.classList.add('hidden'); iconMoon.classList.remove('hidden'); }
+                else { iconSun.classList.remove('hidden'); iconMoon.classList.add('hidden'); }
             };
-            
-            // Define o estado inicial do ícone
             updateIcons(document.documentElement.classList.contains('dark'));
-
-            // Adiciona o listener de clique
             darkModeToggle.addEventListener('click', () => {
                 const isDark = document.documentElement.classList.toggle('dark');
                 localStorage.theme = isDark ? 'dark' : 'light';
                 updateIcons(isDark);
             });
         }
-
         function finalizeUI() {
             const dataInput = document.getElementById('data');
-            if (dataInput) {
-                dataInput.valueAsDate = new Date();
-            }
+            if (dataInput) { dataInput.valueAsDate = new Date(); }
             initializeLocaisDropdowns();
             initializeSolicitantesDropdowns();
             initializeMonthFilter();
-            initializeDarkModeToggle(); // Inicializa o botão de modo escuro
-            // REMOVIDO: loadingOverlay.style.display = 'none';
-            // REMOVIDO: appContainer.style.display = 'flex';
+            initializeDarkModeToggle();
             switchView(currentView);
         }
 
-        // --------------------------
-        // Funções de Persistência (CRUD)
-        // --------------------------
-
+        // --- Funções de Persistência (CRUD) ---
         async function adicionarAcionamento(event) {
             event.preventDefault();
             if (!isAuthReady || !userId) {
-                console.error("Tentativa de adicionar acionamento sem autenticação pronta.");
-                showConfirmationModal('Erro de Autenticação', 'Sistema não autenticado. Recarregue a página e verifique a configuração do Firebase.', 'error');
-                return;
+                showConfirmationModal('Erro de Autenticação', 'Sistema não autenticado.', 'error'); return;
             }
             const data = document.getElementById('data').value;
             const solicitante = document.getElementById('solicitante').value;
@@ -838,32 +678,19 @@
             const observacao = document.getElementById('observacao').value.trim() || null;
             const inputDate = new Date(data);
             if (isNaN(inputDate.getTime())) {
-                 showConfirmationModal('Data Inválida', 'Por favor, insira uma data de acionamento válida.', 'error');
-                 return;
+                 showConfirmationModal('Data Inválida', 'Por favor, insira uma data de acionamento válida.', 'error'); return;
             }
             const utcDate = new Date(inputDate.getUTCFullYear(), inputDate.getUTCMonth(), inputDate.getUTCDate());
             const newAcionamento = {
-                data: utcDate,
-                solicitante,
-                local,
-                motorista: null,
-                horas: null,
-                km: null,
-                custoTotal: 0,
-                chamadoGLPI,
-                osLocamunck,
-                observacao,
-                status: STATUSES.ABERTO,
-                createdAt: serverTimestamp()
+                data: utcDate, solicitante, local, motorista: null, horas: null, km: null,
+                custoTotal: 0, chamadoGLPI, osLocamunck, observacao,
+                status: STATUSES.ABERTO, createdAt: serverTimestamp()
             };
             const acionamentosRef = getCollectionRef();
             if (!acionamentosRef) {
-                console.error("Falha ao obter referência da coleção. DB está nulo.");
-                showConfirmationModal('Modo de Simulação Ativo', 'A configuração do Firebase não foi encontrada. O acionamento NÃO foi guardado.', 'error');
-                return;
+                showConfirmationModal('Modo de Simulação Ativo', 'O acionamento NÃO foi guardado.', 'error'); return;
             };
-            submitButton.disabled = true;
-            submitButton.textContent = 'Guardando...';
+            submitButton.disabled = true; submitButton.textContent = 'Guardando...';
             try {
                 await addDoc(acionamentosRef, newAcionamento);
                 formAcionamento.reset();
@@ -871,55 +698,42 @@
                 showNotificationModal();
             } catch (error) {
                 console.error("Erro ao adicionar acionamento:", error);
-                showConfirmationModal('Erro ao Guardar', `Não foi possível guardar o acionamento: ${error.message}. Verifique as regras de segurança do Firestore.`, 'error');
+                showConfirmationModal('Erro ao Guardar', `Não foi possível guardar: ${error.message}.`, 'error');
             } finally {
-                submitButton.disabled = false;
+                submitButton.disabled = false; 
                 submitButton.textContent = 'Guardar Acionamento';
             }
         }
-
         async function deleteAcionamento(id) {
-            const acionamentosRef = getCollectionRef();
-            if (!acionamentosRef) return;
+            const acionamentosRef = getCollectionRef(); if (!acionamentosRef) return;
             try {
                 await deleteDoc(doc(acionamentosRef, id));
-                console.log(`Acionamento ${id} eliminado com sucesso.`);
             } catch (error) {
                 console.error("Erro ao eliminar acionamento:", error);
-                showConfirmationModal('Erro ao Eliminar', `Não foi possível eliminar o registo: ${error.message}`, 'error');
+                showConfirmationModal('Erro ao Eliminar', `Não foi possível eliminar: ${error.message}`, 'error');
             }
         }
-
         async function executeAcionamentoUpdate(id, updatedData) {
             const originalAcionamento = acionamentosData.find(a => a.id === id);
             if (originalAcionamento && (originalAcionamento.status === STATUSES.ENCERRADO || originalAcionamento.status === STATUSES.CANCELADO)) {
-                console.error("Tentativa de atualização bloqueada: OS já está finalizada (Encerrada ou Cancelada).");
                 return;
             }
             try {
                 const acionamentosRef = getCollectionRef();
                 if (!acionamentosRef) throw new Error("Referência da coleção não encontrada.");
                 await updateDoc(doc(acionamentosRef, id), updatedData);
-                console.log(`Acionamento ${id} atualizado.`);
-                if (updatedData.status === STATUSES.ENCERRADO || updatedData.status === STATUSES.CANCELADO) {
-                    console.log(`Acionamento ${id} finalizado (${updatedData.status}) e agora está bloqueado para edição.`);
-                }
             } catch (error) {
                 console.error(`Erro ao guardar edição: ${error.message}`);
-                showConfirmationModal('Erro ao Guardar', `Não foi possível guardar as alterações: ${error.message}`, 'error');
+                showConfirmationModal('Erro ao Guardar', `Não foi possível guardar: ${error.message}`, 'error');
             }
         }
 
+        // --- Funções de Renderização ---
 
-        // --------------------------
-        // Funções de Renderização
-        // --------------------------
-
-        // Funções de cor para Status (com modo escuro)
         function getStatusColor(status) {
             switch (status) {
                 case STATUSES.ABERTO:
-                    return 'bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-700';
+                    return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border border-yellow-300 dark:border-yellow-700';
                 case STATUSES.EM_EXECUCAO:
                     return 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 border border-blue-300 dark:border-blue-700';
                 case STATUSES.ENCERRADO:
@@ -930,43 +744,35 @@
                     return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600';
             }
         }
-
         function getStatusCardBorder(status) {
             switch (status) {
                 case STATUSES.ABERTO:
-                    return 'border-t-4 border-amber-400 dark:border-amber-500';
+                    return 'border-t-4 border-yellow-500';
                 case STATUSES.EM_EXECUCAO:
-                    return 'border-t-4 border-blue-400 dark:border-blue-500';
+                    return 'border-t-4 border-blue-500';
                 case STATUSES.ENCERRADO:
-                    return 'border-t-4 border-green-400 dark:border-green-500';
+                    return 'border-t-4 border-green-500';
                 case STATUSES.CANCELADO:
-                    return 'border-t-4 border-red-400 dark:border-red-500';
+                    return 'border-t-4 border-red-500';
                 default:
-                    return 'border-t-4 border-gray-400 dark:border-gray-500';
+                    return 'border-t-4 border-gray-500';
             }
         }
 
-        // Renderização de Acionamentos (Cartões ou Lista)
         function renderAcionamentos(data) {
-            let totalHoras = 0;
-            let totalKm = 0;
-            let totalGeral = 0;
-
+            let totalHoras = 0, totalKm = 0, totalGeral = 0;
             const filteredData = data.filter(a => {
                 const acionamentoDate = a.data?.toDate ? a.data.toDate() : (a.data ? new Date(a.data) : null);
                 if (!acionamentoDate) return false;
                 const dateInUTC = new Date(acionamentoDate.getUTCFullYear(), acionamentoDate.getUTCMonth(), acionamentoDate.getUTCDate());
-                const acionamentoMonth = dateInUTC.toISOString().substring(0, 7);
-                return acionamentoMonth === currentMonthFilter;
+                return dateInUTC.toISOString().substring(0, 7) === currentMonthFilter;
             });
-
             filteredData.forEach(acionamento => {
                 const custoTotal = calcularCustoTotal(acionamento.horas || 0, acionamento.km || 0);
                 totalHoras += (acionamento.horas || 0) * HOUR_RATE;
                 totalKm += (acionamento.km || 0) * KM_RATE;
                 totalGeral += custoTotal;
             });
-
             if (historicoViewMode === 'cards') {
                 const htmlCards = filteredData.map(acionamento => {
                     const acionamentoDate = acionamento.data.toDate ? acionamento.data.toDate() : new Date(acionamento.data);
@@ -979,34 +785,29 @@
                     const statusColorClass = getStatusColor(status);
                     const cardBorderClass = getStatusCardBorder(status);
                     const isFinalizado = status === STATUSES.ENCERRADO || status === STATUSES.CANCELADO;
-
                     let actionButtons = '';
                     if (isFinalizado) {
                         actionButtons = `
                             <button data-id="${acionamento.id}" data-action="viewOS" class="p-1 rounded-full text-blue-600 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 hover:bg-blue-50 dark:hover:bg-gray-700 transition duration-150" title="Ver OS">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             </button>
-                            <button data-id="${acionamento.id}" data-action="finalDelete" class="p-1 rounded-full text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 hover:bg-red-50 dark:hover:bg-gray-700 transition duration-150" title="Excluir Definitivamente (Requer Senha)">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        `;
+                            <button data-id="${acionamento.id}" data-action="finalDelete" class="p-1 rounded-full text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 hover:bg-red-50 dark:hover:bg-gray-700 transition duration-150" title="Excluir Definitivamente">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>`;
                     } else {
                         actionButtons = `
                             <button data-id="${acionamento.id}" data-action="viewOS" class="p-1 rounded-full text-blue-600 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 hover:bg-blue-50 dark:hover:bg-gray-700 transition duration-150" title="Ver OS">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             </button>
                             <button data-id="${acionamento.id}" data-action="edit" class="p-1 rounded-full text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150" title="Editar Acionamento">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                             </button>
                             <button data-id="${acionamento.id}" data-action="delete" class="p-1 rounded-full text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 hover:bg-red-50 dark:hover:bg-gray-700 transition duration-150" title="Eliminar (Apenas Status Aberto)">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        `;
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>`;
                     }
-
                     return `
                         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col ${cardBorderClass}">
-                            <!-- Card Header -->
                             <div class="p-4">
                                 <div class="flex justify-between items-start">
                                     <div>
@@ -1016,26 +817,15 @@
                                     <div class="flex space-x-1 flex-shrink-0 ml-2">${actionButtons}</div>
                                 </div>
                                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">GLPI: <span class="font-medium text-gray-800 dark:text-gray-100">${acionamento.chamadoGLPI}</span></p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">OS Locamunck: <span class="font-medium text-gray-800 dark:text-gray-100">${osLocamunckDisplay}</span></p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">OS Engemaf: <span class="font-medium text-gray-800 dark:text-gray-100">${osLocamunckDisplay}</span></p>
                             </div>
-                            <!-- Card Body (Info) -->
                             <div class="px-4 pb-4 border-t border-gray-100 dark:border-gray-700">
                                 <div class="grid grid-cols-2 gap-x-4 gap-y-2 mt-3">
-                                    <div>
-                                        <label class="text-xs text-gray-500 dark:text-gray-400">Solicitante</label>
-                                        <p class="text-sm font-medium text-gray-800 dark:text-gray-100">${acionamento.solicitante}</p>
-                                    </div>
-                                    <div>
-                                        <label class="text-xs text-gray-500 dark:text-gray-400">Motorista</label>
-                                        <p class="text-sm font-medium text-gray-800 dark:text-gray-100">${motoristaDisplay}</p>
-                                    </div>
-                                    <div>
-                                        <label class="text-xs text-gray-500 dark:text-gray-400">Data</label>
-                                        <p class="text-sm font-medium text-gray-800 dark:text-gray-100">${formatDate(acionamentoDate)}</p>
-                                    </div>
+                                    <div><label class="text-xs text-gray-500 dark:text-gray-400">Solicitante</label><p class="text-sm font-medium text-gray-800 dark:text-gray-100">${acionamento.solicitante}</p></div>
+                                    <div><label class="text-xs text-gray-500 dark:text-gray-400">Motorista</label><p class="text-sm font-medium text-gray-800 dark:text-gray-100">${motoristaDisplay}</p></div>
+                                    <div><label class="text-xs text-gray-500 dark:text-gray-400">Data</label><p class="text-sm font-medium text-gray-800 dark:text-gray-100">${formatDate(acionamentoDate)}</p></div>
                                 </div>
                             </div>
-                            <!-- Card Footer (Costs) -->
                             <div class="bg-gray-50 dark:bg-gray-700/50 px-4 py-3 mt-auto border-t dark:border-gray-700">
                                 <div class="flex justify-between items-center">
                                     <div>
@@ -1049,14 +839,11 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 }).join('');
-
-                listaAcionamentos.innerHTML = htmlCards || `<div class="col-span-full text-center py-4 text-gray-500 dark:text-gray-400">Nenhum acionamento encontrado para este mês.</div>`;
+                listaAcionamentos.innerHTML = htmlCards || `<div class="col-span-full text-center py-4 text-gray-500 dark:text-gray-400">Nenhum acionamento encontrado.</div>`;
                 listaAcionamentos.classList.remove('hidden');
                 containerTabelaHistorico.classList.add('hidden');
-
             } else {
                 // MODO LISTA (TABELA)
                 const htmlLista = filteredData.map(acionamento => {
@@ -1069,31 +856,17 @@
                     const status = acionamento.status || STATUSES.ABERTO;
                     const statusColorClass = getStatusColor(status);
                     const isFinalizado = status === STATUSES.ENCERRADO || status === STATUSES.CANCELADO;
-
                     let actionButtons = '';
                     if (isFinalizado) {
                          actionButtons = `
-                            <button data-id="${acionamento.id}" data-action="viewOS" class="p-1 rounded-full text-blue-600 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 hover:bg-blue-50 dark:hover:bg-gray-700 transition duration-150" title="Ver OS">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            </button>
-                            <button data-id="${acionamento.id}" data-action="finalDelete" class="p-1 rounded-full text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 hover:bg-red-50 dark:hover:bg-gray-700 transition duration-150" title="Excluir Definitivamente (Requer Senha)">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        `;
+                            <button data-id="${acionamento.id}" data-action="viewOS" class="p-1 rounded-full text-blue-600 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 hover:bg-blue-50 dark:hover:bg-gray-700" title="Ver OS"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></button>
+                            <button data-id="${acionamento.id}" data-action="finalDelete" class="p-1 rounded-full text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 hover:bg-red-50 dark:hover:bg-gray-700" title="Excluir Definitivamente"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>`;
                     } else {
                          actionButtons = `
-                            <button data-id="${acionamento.id}" data-action="viewOS" class="p-1 rounded-full text-blue-600 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 hover:bg-blue-50 dark:hover:bg-gray-700 transition duration-150" title="Ver OS">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            </button>
-                            <button data-id="${acionamento.id}" data-action="edit" class="p-1 rounded-full text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150" title="Editar Acionamento">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                            </button>
-                            <button data-id="${acionamento.id}" data-action="delete" class="p-1 rounded-full text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 hover:bg-red-50 dark:hover:bg-gray-700 transition duration-150" title="Eliminar (Apenas Status Aberto)">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        `;
+                            <button data-id="${acionamento.id}" data-action="viewOS" class="p-1 rounded-full text-blue-600 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 hover:bg-blue-50 dark:hover:bg-gray-700" title="Ver OS"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></button>
+                            <button data-id="${acionamento.id}" data-action="edit" class="p-1 rounded-full text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700" title="Editar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
+                            <button data-id="${acionamento.id}" data-action="delete" class="p-1 rounded-full text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 hover:bg-red-50 dark:hover:bg-gray-700" title="Eliminar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>`;
                     }
-
                     return `
                         <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                             <td data-label="Data" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${formatDate(acionamentoDate)}</td>
@@ -1101,41 +874,30 @@
                             <td data-label="Local" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${acionamento.local}</td>
                             <td data-label="Motorista" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${motoristaDisplay}</td>
                             <td data-label="Chamado GLPI" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${acionamento.chamadoGLPI}</td>
-                            <td data-label="OS Locamunck" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${osLocamunckDisplay}</td>
+                            <td data-label="OS Engemaf" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${osLocamunckDisplay}</td>
                             <td data-label="Km" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${kmDisplay}</td>
                             <td data-label="Horas" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${horasDisplay}</td>
                             <td data-label="Valor" class="py-2 px-4 whitespace-nowrap font-semibold text-gray-800 dark:text-gray-100">${formatCurrency(custoTotal)}</td>
                             <td data-label="Status" class="py-2 px-4 whitespace-nowrap"><span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium ${statusColorClass}">${status}</span></td>
                             <td data-label="Ações" class="py-2 px-4 flex space-x-2 justify-center md:justify-start">${actionButtons}</td>
-                        </tr>
-                    `;
+                        </tr>`;
                 }).join('');
-
-                listaAcionamentosTabela.innerHTML = htmlLista || `<tr><td colspan="11" class="text-center py-4 text-gray-500 dark:text-gray-400">Nenhum acionamento encontrado para este mês.</td></tr>`;
+                listaAcionamentosTabela.innerHTML = htmlLista || `<tr><td colspan="11" class="text-center py-4 text-gray-500 dark:text-gray-400">Nenhum acionamento encontrado.</td></tr>`;
                 containerTabelaHistorico.classList.remove('hidden');
                 listaAcionamentos.classList.add('hidden');
             }
-
-            // Atualiza os totais do PERÍODO
             const totalHorasEl = document.getElementById('totalHoras');
             if (totalHorasEl) {
                 totalHorasEl.textContent = formatCurrency(totalHoras);
                 document.getElementById('totalKm').textContent = formatCurrency(totalKm);
                 document.getElementById('totalGeral').textContent = formatCurrency(totalGeral);
             }
-
-            // Chama a renderização dos rankings
             if (currentView === 'dashboard') {
                 renderDashboard(filteredData);
             }
         }
-
-        // Renderiza os totais GERAIS
         function renderTotaisGerais(data) {
-            let totalHorasGeral = 0;
-            let totalKmGeral = 0;
-            let totalGeralGeral = 0;
-
+            let totalHorasGeral = 0, totalKmGeral = 0, totalGeralGeral = 0;
             data.forEach(acionamento => {
                 if (acionamento.status !== STATUSES.CANCELADO) {
                     const custoTotal = calcularCustoTotal(acionamento.horas || 0, acionamento.km || 0);
@@ -1144,7 +906,6 @@
                     totalGeralGeral += custoTotal;
                 }
             });
-
             const totalHorasGeralEl = document.getElementById('totalHorasGeral');
             if (totalHorasGeralEl) {
                 totalHorasGeralEl.textContent = formatCurrency(totalHorasGeral);
@@ -1152,75 +913,54 @@
                 document.getElementById('totalGeralGeral').textContent = formatCurrency(totalGeralGeral);
             }
         }
-
-        // Renderiza o Dashboard
         function renderDashboard(data) {
             const rankingLocaisEl = document.getElementById('rankingLocais');
             const rankingSolicitantesEl = document.getElementById('rankingSolicitantes');
             if (!rankingLocaisEl || !rankingSolicitantesEl) return;
-
             const dataValida = data.filter(a => a.status !== STATUSES.CANCELADO);
-
             if (dataValida.length === 0) {
                 rankingLocaisEl.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-sm">Nenhum dado para o período.</p>';
                 rankingSolicitantesEl.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-sm">Nenhum dado para o período.</p>';
                 return;
             }
-
-            const locaisMap = dataValida.reduce((acc, a) => {
-                acc[a.local] = (acc[a.local] || 0) + 1;
-                return acc;
-            }, {});
+            const locaisMap = dataValida.reduce((acc, a) => { acc[a.local] = (acc[a.local] || 0) + 1; return acc; }, {});
             rankingLocaisEl.innerHTML = Object.entries(locaisMap).sort(([, a], [, b]) => b - a).map(([local, count]) => `
                 <div class="flex justify-between border-b dark:border-gray-700 last:border-b-0 py-1">
                     <span class="text-sm text-gray-600 dark:text-gray-300">${local}</span>
                     <span class="text-sm font-bold primary-blue dark:text-blue-300">${count} Acionamento(s)</span>
-                </div>
-            `).join('');
-
-            const solicitantesMap = dataValida.reduce((acc, a) => {
-                acc[a.solicitante] = (acc[a.solicitante] || 0) + 1;
-                return acc;
-            }, {});
+                </div>`).join('');
+            const solicitantesMap = dataValida.reduce((acc, a) => { acc[a.solicitante] = (acc[a.solicitante] || 0) + 1; return acc; }, {});
             rankingSolicitantesEl.innerHTML = Object.entries(solicitantesMap).sort(([, a], [, b]) => b - a).map(([solicitante, count]) => `
                 <div class="flex justify-between border-b dark:border-gray-700 last:border-b-0 py-1">
                     <span class="text-sm text-gray-600 dark:text-gray-300">${solicitante}</span>
                     <span class="text-sm font-bold primary-blue dark:text-blue-300">${count} Acionamento(s)</span>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
-
-        // Renderiza o status do caminhão
         function renderStatusAtualCaminhao(data) {
             const displayCard = document.getElementById('statusCaminhaoDisplay');
             const titleElement = document.getElementById('statusCaminhaoTitle');
             const containerElement = document.getElementById('containerLocaisAtuais');
             if (!displayCard || !titleElement || !containerElement) return;
-
             const ativacoesEmExecucao = data.filter(a => a.status === STATUSES.EM_EXECUCAO);
-
             if (ativacoesEmExecucao.length > 0) {
                 titleElement.textContent = ativacoesEmExecucao.length === 1 ? 'Status Atual do Caminhão:' : `Status Atuais (${ativacoesEmExecucao.length} em execução):`;
-                
                 const htmlList = ativacoesEmExecucao.map(ativacao => {
                     return `
                         <div class="bg-white/70 dark:bg-gray-700/70 p-3 rounded-lg border border-blue-200 dark:border-blue-800 shadow-sm">
                             <div class="flex items-center mb-2">
-                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-300 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-300 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                 <p class="text-blue-900 dark:text-blue-200 font-semibold text-base">${ativacao.local}</p>
                             </div>
                             <div class="flex items-center text-sm text-gray-700 dark:text-gray-300 mb-1">
-                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5h14a2 2 0 012 2v3a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 01-2-2H5a2 2 0 01-2-2V7a2 2 0 012-2z"></path></svg>
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5h14a2 2 0 012 2v3a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 01-2-2H5a2 2 0 01-2-2V7a2 2 0 012-2z"></path></svg>
                                 GLPI: <span class="font-medium ml-1">${ativacao.chamadoGLPI}</span>
                             </div>
                             <div class="flex items-center text-sm text-gray-700 dark:text-gray-300">
-                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                 Solicitante: <span class="font-medium ml-1">${ativacao.solicitante}</span>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 }).join('');
-
                 containerElement.innerHTML = htmlList;
                 displayCard.classList.remove('hidden');
             } else {
@@ -1229,69 +969,44 @@
             }
         }
 
-        // --------------------------
-        // Lógica de Views e Navegação (MODIFICADA)
-        // --------------------------
-
+        // --- Lógica de Views e Navegação ---
         function switchView(view) {
             currentView = view;
-            // Esconde todas as views (agora dentro do <main>)
             document.querySelectorAll('main .card[id^="view-"]').forEach(v => v.classList.add('hidden'));
-            
-            // Reseta todos os botões da sidebar
             document.querySelectorAll('#sidebar nav button').forEach(b => {
-                b.classList.remove('bg-primary-blue', 'text-white', 'dark:bg-blue-700');
+                b.classList.remove('sidebar-active');
                 b.classList.add('text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
             });
-
             const viewEl = document.getElementById(`view-${view}`);
             const tabEl = document.getElementById(`tab-${view}`);
-
-            if (viewEl) {
-                viewEl.classList.remove('hidden');
-            }
+            if (viewEl) { viewEl.classList.remove('hidden'); }
             if (tabEl) {
-                // Ativa o botão clicado
-                tabEl.classList.add('bg-primary-blue', 'text-white', 'dark:bg-blue-700');
+                tabEl.classList.add('sidebar-active');
                 tabEl.classList.remove('text-gray-500', 'dark:text-gray-400', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
             }
-
-            if (view === 'historico' || view === 'dashboard') {
-                renderAcionamentos(acionamentosData);
-            } else if (view === 'localizacao') {
-                renderLocalizacaoView();
-            }
+            if (view === 'historico' || view === 'dashboard') { renderAcionamentos(acionamentosData); }
+            else if (view === 'localizacao') { renderLocalizacaoView(); }
         }
-
-        // Controla o toggle de visualização (Cartões/Lista)
         window.toggleHistoricoView = (mode) => {
             if (mode === historicoViewMode) return;
             historicoViewMode = mode;
-
             const btnCards = document.getElementById('btn-view-cards');
             const btnLista = document.getElementById('btn-view-lista');
-            
             if (mode === 'cards') {
-                btnCards.classList.add('bg-primary-blue', 'text-white');
+                btnCards.classList.add('btn-danger', 'text-white');
                 btnCards.classList.remove('bg-white', 'dark:bg-gray-700', 'text-gray-600', 'dark:text-gray-300', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
-                
                 btnLista.classList.add('bg-white', 'dark:bg-gray-700', 'text-gray-600', 'dark:text-gray-300', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
-                btnLista.classList.remove('bg-primary-blue', 'text-white');
+                btnLista.classList.remove('btn-danger', 'text-white');
             } else {
-                btnLista.classList.add('bg-primary-blue', 'text-white');
+                btnLista.classList.add('btn-danger', 'text-white');
                 btnLista.classList.remove('bg-white', 'dark:bg-gray-700', 'text-gray-600', 'dark:text-gray-300', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
-
                 btnCards.classList.add('bg-white', 'dark:bg-gray-700', 'text-gray-600', 'dark:text-gray-300', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
-                btnCards.classList.remove('bg-primary-blue', 'text-white');
+                btnCards.classList.remove('btn-danger', 'text-white');
             }
-
             renderAcionamentos(acionamentosData);
         }
 
-        // --------------------------
-        // Modal e Ações
-        // --------------------------
-
+        // --- Modal e Ações ---
         function closeModal(event, modalId = 'modal') {
             const targetModal = document.getElementById(modalId);
             if (!targetModal) return;
@@ -1303,40 +1018,33 @@
                  document.getElementById('passwordError').style.display = 'none';
                  document.getElementById('deleteIdStorage').value = '';
             } else if (modalId === 'modal') {
-                 modalBody.innerHTML = '';
-                 modalFooter.innerHTML = '';
+                 modalBody.innerHTML = ''; modalFooter.innerHTML = '';
             }
         }
-
         function showNotificationModal() {
             notificationModal.classList.remove('hidden');
             notificationModal.classList.add('flex');
-            void notificationModal.offsetHeight;
         }
-
         function showConfirmationModal(title, message, type, onConfirm) {
             const confirmModal = document.getElementById('confirmationModal');
             document.getElementById('confirmationModalTitle').textContent = title;
             document.getElementById('confirmationModalMessage').innerHTML = message;
             const iconContainer = document.getElementById('confirmationModalIcon');
             const footer = document.getElementById('confirmationModalFooter');
-            let iconHtml = '';
-            let confirmButtonClass = '';
-            let confirmButtonText = 'Confirmar';
+            let iconHtml = '', confirmButtonHtml = '', confirmButtonText = 'Confirmar';
 
             if (type === 'delete') {
                 iconHtml = `<svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
-                confirmButtonClass = 'bg-red-600 hover:bg-red-700';
+                confirmButtonHtml = `<button id="confirmActionBtn" class="btn-danger px-4 py-2 rounded-md font-semibold"></button>`;
                 confirmButtonText = 'Sim, Eliminar';
             } else if (type === 'closure') {
                 iconHtml = `<svg class="w-12 h-12 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
-                confirmButtonClass = 'bg-red-600 hover:bg-red-700';
+                confirmButtonHtml = `<button id="confirmActionBtn" class="btn-danger px-4 py-2 rounded-md font-semibold"></button>`;
                 confirmButtonText = 'Sim, Confirmar';
             } else if (type === 'error') {
                  iconHtml = `<svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
             }
             iconContainer.innerHTML = iconHtml;
-
             const cancelButton = `<button onclick="closeModal(null, 'confirmationModal')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition duration-150">Cancelar</button>`;
             
             if (type === 'error') {
@@ -1346,8 +1054,10 @@
                     if (title.includes('Cancelar')) confirmButtonText = 'Sim, Cancelar';
                     else if (title.includes('Encerrar')) confirmButtonText = 'Sim, Encerrar';
                 }
-                footer.innerHTML = `<button id="confirmActionBtn" class="px-4 py-2 text-white rounded-md transition duration-150 font-semibold ${confirmButtonClass}">${confirmButtonText}</button>${cancelButton}`;
-                document.getElementById('confirmActionBtn').addEventListener('click', () => {
+                footer.innerHTML = `${confirmButtonHtml}${cancelButton}`;
+                const confirmBtn = document.getElementById('confirmActionBtn');
+                confirmBtn.textContent = confirmButtonText;
+                confirmBtn.addEventListener('click', () => {
                     closeModal(null, 'confirmationModal');
                     if (onConfirm) onConfirm();
                 });
@@ -1355,42 +1065,31 @@
             confirmModal.classList.remove('hidden');
             confirmModal.classList.add('flex');
         }
-
-        // Conversão de DMS para Decimal
         function dmsToDecimal(dmsString) {
             const cleanedString = dmsString.trim().toUpperCase();
             const parts = cleanedString.split(/[^\d\.]+/).filter(Boolean);
-            if(parts.length < 3) {
-                console.warn(`Formato DMS inválido: ${dmsString}`);
-                return 0;
-            }
+            if(parts.length < 3) { return 0; }
             const [degrees, minutes, seconds] = parts.map(parseFloat);
             let decimal = degrees + (minutes / 60) + (seconds / 3600);
-            if (cleanedString.includes('S') || cleanedString.includes('W')) {
-                decimal = -decimal;
-            }
+            if (cleanedString.includes('S') || cleanedString.includes('W')) { decimal = -decimal; }
             return decimal;
         }
-
-        // Renderiza a View de Localização
         function renderLocalizacaoView() {
-            const contentEl = document.getElementById('localizacaoContent');
-            if (!contentEl) return;
+            const contentEl = document.getElementById('localizacaoContent'); if (!contentEl) return;
             const pps = LOCAIS_GEOLOCALIZACAO.filter(l => l.nome.startsWith('PP'));
             const saus = LOCAIS_GEOLOCALIZACAO.filter(l => l.nome.startsWith('SAU'));
             const createUnitList = (title, units) => {
                 let html = `<h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 border-b dark:border-gray-700 pb-2 mb-4">${title}</h3>`;
                 html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">`;
                 units.forEach(unit => {
-                    const lat = dmsToDecimal(unit.latDMS);
-                    const lon = dmsToDecimal(unit.lonDMS);
+                    const lat = dmsToDecimal(unit.latDMS); const lon = dmsToDecimal(unit.lonDMS);
                     const mapLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
                     html += `
                         <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border dark:border-gray-700">
                             <p class="font-bold text-lg primary-blue dark:text-blue-300">${unit.nome} - ${unit.cidade}</p>
                             <p class="text-sm text-gray-600 dark:text-gray-300">Referência: ${unit.km}</p>
                             <p class="text-xs font-mono text-gray-500 dark:text-gray-400 mt-2">${unit.latDMS} / ${unit.lonDMS}</p>
-                            <a href="${mapLink}" target="_blank" rel="noopener noreferrer" class="inline-block mt-3 w-full text-center bg-green-600 text-white py-1 px-3 rounded-md hover:bg-green-700 text-sm font-semibold transition duration-150">Abrir no Mapa</a>
+                            <a href="${mapLink}" target="_blank" rel="noopener noreferrer" class="inline-block mt-3 w-full text-center btn-success py-1 px-3 rounded-md text-sm font-semibold">Abrir no Mapa</a>
                         </div>`;
                 });
                 html += `</div>`;
@@ -1398,112 +1097,50 @@
             };
             contentEl.innerHTML = createUnitList('Praças de Pedágio (PP)', pps) + createUnitList('Serviços de Atendimento ao Utilizador (SAU)', saus);
         }
-
-        // Gera o conteúdo da OS (para modal)
         function generateOSContent(acionamento) {
             const dataAcionamento = acionamento.data.toDate ? acionamento.data.toDate() : new Date(acionamento.data);
-            const horas = acionamento.horas || 0;
-            const km = acionamento.km || 0;
-            const custoHoras = horas * HOUR_RATE;
-            const custoKm = km * KM_RATE;
+            const horas = acionamento.horas || 0; const km = acionamento.km || 0;
+            const custoHoras = horas * HOUR_RATE; const custoKm = km * KM_RATE;
             const custoTotal = calcularCustoTotal(horas, km);
             const status = acionamento.status || STATUSES.ABERTO;
             const observacao = acionamento.observacao || 'N/A';
             const osLocamunck = acionamento.osLocamunck || 'N/A';
-
             if (status === STATUSES.CANCELADO) {
-                return `[ACIONAMENTO CANCELADO]
-------------------------------------------------------
-ID do Registo: ${acionamento.id}
-Status Atual: ${status.toUpperCase()}
-Data: ${formatDate(dataAcionamento)}
-Solicitante: ${acionamento.solicitante}
-Local: ${acionamento.local}
-Chamado GLPI: ${acionamento.chamadoGLPI}
-OS Locamunck: ${osLocamunck}
-MOTIVO DO CANCELAMENTO:
-${observacao}
-------------------------------------------------------
-[FIM DA OS]`;
+                return `[ACIONAMENTO CANCELADO]\n------------------------------------------------------\nID do Registo: ${acionamento.id}\nStatus Atual: ${status.toUpperCase()}\nData: ${formatDate(dataAcionamento)}\nSolicitante: ${acionamento.solicitante}\nLocal: ${acionamento.local}\nChamado GLPI: ${acionamento.chamadoGLPI}\nOS Engemaf: ${osLocamunck}\nMOTIVO DO CANCELAMENTO:\n${observacao}\n------------------------------------------------------\n[FIM DA OS]`;
             }
-
-            return `[ORDEM DE SERVIÇO - ACIONAMENTO MUNCK]
-------------------------------------------------------
-ID do Registo: ${acionamento.id}
-Status Atual: ${status.toUpperCase()}
-1. INFORMAÇÕES BÁSICAS:
-    Data do Acionamento: ${formatDate(dataAcionamento)}
-    Solicitante: ${acionamento.solicitante}
-    Motorista: ${acionamento.motorista || 'N/A'}
-    Local: ${acionamento.local}
-    Chamado GLPI: ${acionamento.chamadoGLPI}
-    OS Locamunck: ${osLocamunck}
-2. DADOS DE CUSTO:
-    Tempo de Serviço: ${(horas).toFixed(2)} Horas
-    Km Deslocamento: ${(km).toFixed(1)} Km
-3. CÁLCULO FINANCEIRO:
-    Custo Horas (${formatCurrency(HOUR_RATE)}/h): ${formatCurrency(custoHoras)}
-    Custo Km (${formatCurrency(KM_RATE)}/km): ${formatCurrency(custoKm)}
-    --------------------------------------------------
-    CUSTO TOTAL: ${formatCurrency(custoTotal)}
-4. OBSERVAÇÕES:
-    ${observacao}
-5. INFORMAÇÕES DE CONTACTO:
-    E-mail para Notificação: ${NOTIFICATION_EMAIL}
-------------------------------------------------------
-[FIM DA OS]`;
+            return `[ORDEM DE SERVIÇO - ACIONAMENTO MUNCK]\n------------------------------------------------------\nID do Registo: ${acionamento.id}\nStatus Atual: ${status.toUpperCase()}\n1. INFORMAÇÕES BÁSICAS:\n    Data do Acionamento: ${formatDate(dataAcionamento)}\n    Solicitante: ${acionamento.solicitante}\n    Motorista: ${acionamento.motorista || 'N/A'}\n    Local: ${acionamento.local}\n    Chamado GLPI: ${acionamento.chamadoGLPI}\n    OS Engemaf: ${osLocamunck}\n2. DADOS DE CUSTO:\n    Tempo de Serviço: ${(horas).toFixed(2)} Horas\n    Km Deslocamento: ${(km).toFixed(1)} Km\n3. CÁLCULO FINANCEIRO:\n    Custo Horas (${formatCurrency(HOUR_RATE)}/h): ${formatCurrency(custoHoras)}\n    Custo Km (${formatCurrency(KM_RATE)}/km): ${formatCurrency(custoKm)}\n    --------------------------------------------------\n    CUSTO TOTAL: ${formatCurrency(custoTotal)}\n4. OBSERVAÇÕES:\n    ${observacao}\n5. INFORMAÇÕES DE CONTACTO:\n    E-mail para Notificação: ${NOTIFICATION_EMAIL}\n------------------------------------------------------\n[FIM DA OS]`;
         }
-
-        // Ação de Ver OS
         function handleViewOSClick(event) {
-            const button = event.target.closest('[data-action="viewOS"]');
-            if (!button) return;
+            const button = event.target.closest('[data-action="viewOS"]'); if (!button) return;
             const id = button.dataset.id;
-            const acionamento = acionamentosData.find(a => a.id === id);
-            if (!acionamento) return;
-
+            const acionamento = acionamentosData.find(a => a.id === id); if (!acionamento) return;
             modalTitle.textContent = `Ordem de Serviço (OS) - ${id.substring(0, 8)}...`;
             modalBody.innerHTML = `<div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto"><pre id="osContentText" class="text-sm font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-100">${generateOSContent(acionamento)}</pre></div>`;
             modalFooter.innerHTML = `<button id="copyOsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-150">Copiar Texto</button><button onclick="closeModal(null, 'modal')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition duration-150">Fechar</button>`;
-
             document.getElementById('copyOsBtn').addEventListener('click', () => {
                 const text = document.getElementById('osContentText').textContent;
                 const el = document.createElement('textarea');
-                el.value = text;
-                document.body.appendChild(el);
-                el.select();
-                document.execCommand('copy');
-                document.body.removeChild(el);
+                el.value = text; document.body.appendChild(el); el.select();
+                document.execCommand('copy'); document.body.removeChild(el);
                 const copyBtn = document.getElementById('copyOsBtn');
                 copyBtn.textContent = 'Copiado!';
                 setTimeout(() => copyBtn.textContent = 'Copiar Texto', 1500);
             });
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
         }
-
-        // Ação de Editar
         function handleEditAcionamento(event) {
-            const button = event.target.closest('[data-action="edit"]');
-            if (!button) return;
+            const button = event.target.closest('[data-action="edit"]'); if (!button) return;
             const id = button.dataset.id;
-            const acionamento = acionamentosData.find(a => a.id === id);
-            if (!acionamento) return;
-
+            const acionamento = acionamentosData.find(a => a.id === id); if (!acionamento) return;
             const originalStatus = acionamento.status || STATUSES.ABERTO;
             if (originalStatus === STATUSES.ENCERRADO || originalStatus === STATUSES.CANCELADO) return;
-
             const dataAcionamento = acionamento.data.toDate ? acionamento.data.toDate() : new Date(acionamento.data);
             const dateValue = new Date(dataAcionamento.getTime() + dataAcionamento.getTimezoneOffset() * 60000).toISOString().substring(0, 10);
-
             const solicitanteOptions = SOLICITANTES.map(s => `<option value="${s}" ${s === acionamento.solicitante ? 'selected' : ''}>${s}</option>`).join('');
             const localOptions = LOCAIS.map(l => `<option value="${l.nome} - ${l.cidade}" ${`${l.nome} - ${l.cidade}` === acionamento.local ? 'selected' : ''}>${l.nome} - ${l.cidade}</option>`).join('');
             const statusOptions = Object.values(STATUSES).map(s => `<option value="${s}" ${s === originalStatus ? 'selected' : ''}>${s}</option>`).join('');
-            
-            const inputStyle = "mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 p-2 shadow-sm focus:border-primary-blue focus:ring-primary-blue";
+            const inputStyle = "mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 p-2 shadow-sm focus:border-red-500 focus:ring-red-500";
             const labelStyle = "block text-sm font-medium text-gray-700 dark:text-gray-300";
-
             modalTitle.textContent = `Editar Acionamento - OS ${acionamento.chamadoGLPI}`;
              modalBody.innerHTML = `
                 <form id="formEditAcionamento">
@@ -1521,97 +1158,68 @@ Status Atual: ${status.toUpperCase()}
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         <div><label for="editChamadoGLPI" class="${labelStyle}">Chamado GLPI</label><input type="text" id="editChamadoGLPI" value="${acionamento.chamadoGLPI}" required class="${inputStyle}"></div>
-                        <div><label for="editOsLocamunck" class="${labelStyle}">OS Locamunck</label><input type="text" id="editOsLocamunck" value="${acionamento.osLocamunck || ''}" class="${inputStyle}"></div>
+                        <div><label for="editOsLocamunck" class="${labelStyle}">OS Engemaf</label><input type="text" id="editOsLocamunck" value="${acionamento.osLocamunck || ''}" class="${inputStyle}"></div>
                     </div>
-                    <div class="mt-4"><label for="editObservacao" class="${labelStyle}">Observação</label><textarea id="editObservacao" rows="3" class="${inputStyle}" placeholder="Descreva a atividade ou qualquer nota relevante...">${acionamento.observacao || ''}</textarea></div>
-                </form>
-            `;
-
-            modalFooter.innerHTML = `<button id="saveEditBtn" class="px-4 py-2 bg-primary-blue text-white rounded-md">Guardar Alterações</button><button onclick="closeModal(null, 'modal')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-md">Cancelar</button>`;
-
+                    <div class="mt-4"><label for="editObservacao" class="${labelStyle}">Observação</label><textarea id="editObservacao" rows="3" class="${inputStyle}" placeholder="Descreva a atividade...">${acionamento.observacao || ''}</textarea></div>
+                </form>`;
+            modalFooter.innerHTML = `<button id="saveEditBtn" class="btn-gradient-red px-4 py-2 rounded-md font-semibold">Guardar Alterações</button><button onclick="closeModal(null, 'modal')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-md">Cancelar</button>`;
             const editStatusSelect = document.getElementById('editStatus');
             const editMotoristaInput = document.getElementById('editMotorista');
             const editHorasInput = document.getElementById('editHoras');
             const editKmInput = document.getElementById('editKm');
             const editObservacaoTextarea = document.getElementById('editObservacao');
-
             const toggleFieldsBasedOnStatus = () => {
                 const selectedStatus = editStatusSelect.value;
                 if (selectedStatus === STATUSES.CANCELADO) {
-                    editMotoristaInput.disabled = true;
-                    editHorasInput.disabled = true;
-                    editKmInput.disabled = true;
-                    editObservacaoTextarea.required = true;
-                    editObservacaoTextarea.placeholder = 'Motivo do cancelamento (obrigatório)';
-                    editMotoristaInput.value = '';
-                    editHorasInput.value = '';
-                    editKmInput.value = '';
+                    editMotoristaInput.disabled = true; editHorasInput.disabled = true; editKmInput.disabled = true;
+                    editObservacaoTextarea.required = true; editObservacaoTextarea.placeholder = 'Motivo do cancelamento (obrigatório)';
+                    editMotoristaInput.value = ''; editHorasInput.value = ''; editKmInput.value = '';
                 } else {
-                    editMotoristaInput.disabled = false;
-                    editHorasInput.disabled = false;
-                    editKmInput.disabled = false;
+                    editMotoristaInput.disabled = false; editHorasInput.disabled = false; editKmInput.disabled = false;
                     editMotoristaInput.required = (selectedStatus !== STATUSES.ABERTO);
-                    editObservacaoTextarea.required = false;
-                    editObservacaoTextarea.placeholder = 'Descreva a atividade ou qualquer nota relevante...';
+                    editObservacaoTextarea.required = false; editObservacaoTextarea.placeholder = 'Descreva a atividade...';
                 }
             };
-
             editStatusSelect.addEventListener('change', toggleFieldsBasedOnStatus);
             toggleFieldsBasedOnStatus();
-
             document.getElementById('saveEditBtn').addEventListener('click', async () => {
                 const editId = document.getElementById('editId').value;
                 const editStatus = document.getElementById('editStatus').value;
                 const editObservacao = document.getElementById('editObservacao').value.trim();
                 const editMotorista = document.getElementById('editMotorista').value;
                 const editOsLocamunck = document.getElementById('editOsLocamunck').value.trim() || null;
-
                 if (editStatus === STATUSES.CANCELADO) {
                     if (!editObservacao) {
-                        showConfirmationModal('Campo Obrigatório', 'Para cancelar, o campo "Observação" deve ser preenchido com o motivo.', 'error');
-                        return;
+                        showConfirmationModal('Campo Obrigatório', 'Para cancelar, "Observação" deve ser preenchido com o motivo.', 'error'); return;
                     }
                 } else if (editStatus !== STATUSES.ABERTO) {
                     if (!editMotorista) {
-                        showConfirmationModal('Campo Obrigatório', 'O campo "Motorista" deve ser preenchido para guardar as alterações.', 'error');
-                        return;
+                        showConfirmationModal('Campo Obrigatório', 'O campo "Motorista" deve ser preenchido.', 'error'); return;
                     }
                 }
-
                 const editDate = new Date(document.getElementById('editData').value);
                  if (isNaN(editDate.getTime())) {
-                      showConfirmationModal('Data Inválida', 'Por favor, insira uma data de acionamento válida.', 'error');
-                      return;
+                       showConfirmationModal('Data Inválida', 'Por favor, insira uma data válida.', 'error'); return;
                  }
                 const utcDate = new Date(editDate.getUTCFullYear(), editDate.getUTCMonth(), editDate.getUTCDate());
-
                 let horasValue, kmValue, custoTotalValue, motoristaValue;
                 if (editStatus === STATUSES.CANCELADO) {
-                    motoristaValue = null;
-                    horasValue = null;
-                    kmValue = null;
-                    custoTotalValue = 0;
+                    motoristaValue = null; horasValue = null; kmValue = null; custoTotalValue = 0;
                 } else {
                     motoristaValue = editMotorista;
                     horasValue = document.getElementById('editHoras').value ? parseFloat(document.getElementById('editHoras').value) : null;
                     kmValue = document.getElementById('editKm').value ? parseFloat(document.getElementById('editKm').value) : null;
                     custoTotalValue = calcularCustoTotal(horasValue || 0, kmValue || 0);
                 }
-
                 const updatedData = {
-                    data: utcDate,
-                    status: editStatus,
+                    data: utcDate, status: editStatus,
                     solicitante: document.getElementById('editSolicitante').value,
                     local: document.getElementById('editLocal').value,
-                    motorista: motoristaValue,
-                    horas: horasValue,
-                    km: kmValue,
+                    motorista: motoristaValue, horas: horasValue, km: kmValue,
                     chamadoGLPI: document.getElementById('editChamadoGLPI').value,
-                    osLocamunck: editOsLocamunck,
-                    observacao: editObservacao || null,
+                    osLocamunck: editOsLocamunck, observacao: editObservacao || null,
                     custoTotal: custoTotalValue,
                 };
-
                 closeModal();
                 const isFinalizing = editStatus === STATUSES.ENCERRADO || editStatus === STATUSES.CANCELADO;
                 const wasFinalized = originalStatus === STATUSES.ENCERRADO || originalStatus === STATUSES.CANCELADO;
@@ -1619,45 +1227,33 @@ Status Atual: ${status.toUpperCase()}
                     const actionText = editStatus === STATUSES.ENCERRADO ? 'Encerrar' : 'Cancelar';
                     showConfirmationModal(
                         `Confirmar ${actionText}?`,
-                        `Ao ${actionText.toLowerCase()}, não poderá mais editar este acionamento. Deseja continuar?`,
-                        'closure',
+                        `Ao ${actionText.toLowerCase()}, não poderá mais editar este acionamento.`, 'closure',
                         () => executeAcionamentoUpdate(editId, updatedData)
                     );
                 } else {
                     await executeAcionamentoUpdate(editId, updatedData);
                 }
             });
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
         }
-
-        // Ação de Eliminar (Status Aberto)
         function handleDeleteClick(event) {
-            const button = event.target.closest('[data-action="delete"]');
-            if (!button) return;
+            const button = event.target.closest('[data-action="delete"]'); if (!button) return;
             const id = button.dataset.id;
             const acionamento = acionamentosData.find(a => a.id === id);
             if (acionamento && acionamento.status !== STATUSES.ABERTO) {
-                 showConfirmationModal('Ação Bloqueada', 'Só é possível eliminar acionamentos com o status "Aberto". Acionamentos em execução, encerrados ou cancelados não podem ser eliminados.', 'error');
-                 return;
+                 showConfirmationModal('Ação Bloqueada', 'Só é possível eliminar acionamentos com status "Aberto".', 'error'); return;
             }
-            showConfirmationModal('Confirmar Eliminação?', `Tem a certeza que deseja eliminar o acionamento para o chamado ${acionamento.chamadoGLPI}?`, 'delete', () => deleteAcionamento(id));
+            showConfirmationModal('Confirmar Eliminação?', `Deseja eliminar o chamado ${acionamento.chamadoGLPI}?`, 'delete', () => deleteAcionamento(id));
         }
-
-        // Ação de Eliminar Final (com Senha)
         function handleFinalDeleteClick(event) {
-            const button = event.target.closest('[data-action="finalDelete"]');
-            if (!button) return;
+            const button = event.target.closest('[data-action="finalDelete"]'); if (!button) return;
             const id = button.dataset.id;
             document.getElementById('deleteIdStorage').value = id;
             document.getElementById('passwordInput').value = '';
             document.getElementById('passwordError').style.display = 'none';
-            passwordModal.classList.remove('hidden');
-            passwordModal.classList.add('flex');
+            passwordModal.classList.remove('hidden'); passwordModal.classList.add('flex');
             setTimeout(() => document.getElementById('passwordInput').focus(), 100);
         }
-
         function checkPasswordAndDelete() {
             const passwordInput = document.getElementById('passwordInput');
             const passwordError = document.getElementById('passwordError');
@@ -1667,173 +1263,108 @@ Status Atual: ${status.toUpperCase()}
                 deleteAcionamento(deleteId);
             } else {
                 passwordError.style.display = 'block';
-                passwordInput.value = '';
-                passwordInput.focus();
+                passwordInput.value = ''; passwordInput.focus();
             }
         }
 
-        // --------------------------
-        // Funções de Exportação (Modificada)
-        // --------------------------
-
+        // --- Exportação ---
         function exportToCSV() {
             const filteredData = acionamentosData.filter(a => {
                 const acionamentoDate = a.data?.toDate ? a.data.toDate() : (a.data ? new Date(a.data) : null);
                 if (!acionamentoDate) return false;
                 const dateInUTC = new Date(acionamentoDate.getUTCFullYear(), acionamentoDate.getUTCMonth(), acionamentoDate.getUTCDate());
-                const acionamentoMonth = dateInUTC.toISOString().substring(0, 7);
-                return acionamentoMonth === currentMonthFilter;
+                return dateInUTC.toISOString().substring(0, 7) === currentMonthFilter;
             });
             if (filteredData.length === 0) return;
-
             const header = ["DATA", "LOCAL", "CHAMADO", "VALOR DAS HORAS", "VALOR DO KM", "TOTAL"];
             const csvRows = filteredData.map(a => {
                 const acionamentoDate = a.data.toDate ? a.data.toDate() : new Date(a.data);
-                const horas = a.horas || 0;
-                const km = a.km || 0;
-                const custoHoras = horas * HOUR_RATE;
-                const custoKm = km * KM_RATE;
+                const horas = a.horas || 0; const km = a.km || 0;
+                const custoHoras = horas * HOUR_RATE; const custoKm = km * KM_RATE;
                 const custoTotal = custoHoras + custoKm;
                 const custoHorasValue = custoHoras.toFixed(2).replace('.', ',');
                 const custoKmValue = custoKm.toFixed(2).replace('.', ',');
                 const custoTotalValue = custoTotal.toFixed(2).replace('.', ',');
-                return [
-                    `"${formatDate(acionamentoDate)}"`,
-                    `"${a.local}"`,
-                    `"${a.chamadoGLPI}"`,
-                    `"${custoHorasValue}"`,
-                    `"${custoKmValue}"`,
-                    `"${custoTotalValue}"`
-                ].join(';');
+                return [`"${formatDate(acionamentoDate)}"`,`"${a.local}"`,`"${a.chamadoGLPI}"`,
+                    `"${custoHorasValue}"`,`"${custoKmValue}"`,`"${custoTotalValue}"`].join(';');
             });
             const csvContent = ["\uFEFF", header.join(';'), ...csvRows].join('\n');
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a'); const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
-            link.setAttribute('download', `acionamentos_munck_${currentMonthFilter}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            link.setAttribute('download', `acionamentos_munck_engemaf_${currentMonthFilter}.csv`);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
-        // --------------------------
-        // Lógica de Inicialização e Auth (MODIFICADA)
-        // --------------------------
-
+        // --- Lógica de Inicialização e Auth ---
         async function initializeAppLogic() {
             if (typeof setLogLevel === 'function') setLogLevel('Debug');
             const appId = typeof __app_id !== 'undefined' ? __app_id : null;
             let firebaseConfig = null;
-            
             try {
                 if (typeof __firebase_config !== 'undefined' && __firebase_config && __firebase_config !== "{}") {
                     firebaseConfig = JSON.parse(__firebase_config);
                 }
-            } catch (e) {
-                console.error("Erro ao fazer parse de __firebase_config:", e);
-            }
-
+            } catch (e) { console.error("Erro ao fazer parse de __firebase_config:", e); }
             if (!firebaseConfig || !firebaseConfig.projectId) {
-                console.warn("MODO DE SIMULAÇÃO ATIVADO: Configuração do Firebase não encontrada.");
-                loadingOverlay.style.display = 'none';
-                loginContainer.style.display = 'flex'; // Alterado para 'flex'
+                console.warn("MODO DE SIMULAÇÃO: Configuração do Firebase não encontrada.");
+                loadingOverlay.style.display = 'none'; loginContainer.style.display = 'flex';
                 authError.textContent = 'Erro: Configuração do Firebase não encontrada.';
-                authError.classList.remove('hidden');
-                toggleAuthForms('login'); // Mostra o form de login
-                return;
+                authError.classList.remove('hidden'); toggleAuthForms('login'); return;
             }
-
             try {
                 const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-
-                // onAuthStateChanged agora controla se o Login ou o App são mostrados.
+                db = getFirestore(app); auth = getAuth(app);
                 onAuthStateChanged(auth, (user) => {
-                    // MODIFICAÇÃO: Apenas continua se o utilizador existir E o email estiver verificado
                     if (user && user.emailVerified) {
-                        // --- UTILIZADOR AUTENTICADO E VERIFICADO ---
-                        userId = user.uid;
-                        isAuthReady = true;
+                        // --- AUTENTICADO E VERIFICADO ---
+                        userId = user.uid; isAuthReady = true;
                         userIdDisplay.textContent = user.email || userId.substring(0, 10);
                         console.log(`SUCESSO AUTH: Utilizador autenticado: ${userId}`);
-                        
-                        if (submitButton) {
-                            submitButton.disabled = false;
-                            submitButton.textContent = 'Guardar Acionamento';
-                        }
-                        
+                        if (submitButton) { submitButton.disabled = false; submitButton.textContent = 'Guardar Acionamento'; }
                         if (!window.firestoreListenersAttached) {
-                            setupFirestoreListeners(appId);
-                            window.firestoreListenersAttached = true;
+                            setupFirestoreListeners(appId); window.firestoreListenersAttached = true;
                         }
-                        
                         finalizeUI(); 
-                        
                         appContainer.style.display = 'flex';
                         loginContainer.style.display = 'none';
                         loadingOverlay.style.display = 'none';
-
                     } else if (user && !user.emailVerified) {
-                         // --- UTILIZADOR AUTENTICADO MAS NÃO VERIFICADO ---
+                         // --- AUTENTICADO MAS NÃO VERIFICADO ---
                          console.warn("Utilizador logado mas email não verificado. A deslogar.");
-                         // Mostra o erro no ecrã de login
                          authError.textContent = 'Email não verificado! Por favor, clique no link enviado para o seu email.';
                          authError.classList.remove('hidden');
-                         signOut(auth); // Força o logout para disparar o 'else'
-                    
+                         signOut(auth);
                     } else {
-                        // --- UTILIZADOR NÃO AUTENTICADO ---
+                        // --- NÃO AUTENTICADO ---
                         console.warn("Nenhum utilizador logado. Mostrando ecrã de login.");
-                        isAuthReady = false;
-                        userId = null;
-                        
+                        isAuthReady = false; userId = null;
                         appContainer.style.display = 'none';
                         loginContainer.style.display = 'flex';
                         loadingOverlay.style.display = 'none';
-
-                        if (submitButton) {
-                            submitButton.disabled = true;
-                            submitButton.textContent = 'Aguardando autenticação...';
-                        }
-                        
+                        if (submitButton) { submitButton.disabled = true; submitButton.textContent = 'Aguardando autenticação...'; }
                         acionamentosData = [];
                         if (firestoreUnsubscribe) {
                             console.log("Desligando listener do Firestore.");
-                            firestoreUnsubscribe();
-                            firestoreUnsubscribe = null;
+                            firestoreUnsubscribe(); firestoreUnsubscribe = null;
                         }
                         renderAcionamentos(acionamentosData); 
-                        
                         window.firestoreListenersAttached = false;
                         toggleAuthForms('login');
                     }
                 });
-
             } catch (error) {
                 console.error("Erro CRÍTICO na inicialização do Firebase:", error);
-                loadingOverlay.style.display = 'none';
-                loginContainer.style.display = 'flex';
+                loadingOverlay.style.display = 'none'; loginContainer.style.display = 'flex';
                 authError.textContent = `Erro crítico ao iniciar: ${error.message}`;
-                authError.classList.remove('hidden');
-                toggleAuthForms('login');
+                authError.classList.remove('hidden'); toggleAuthForms('login');
             }
         }
-
         function setupFirestoreListeners(appId) {
-            if (!db) {
-                console.error("setupFirestoreListeners chamado sem db!");
-                return;
-            }
+            if (!db) { console.error("setupFirestoreListeners chamado sem db!"); return; }
             const acionamentosRef = getCollectionRef();
-            if (!acionamentosRef) {
-                   console.error("Falha ao obter referência da coleção em setupFirestoreListeners");
-                   return;
-            }
+            if (!acionamentosRef) { console.error("Falha ao obter referência da coleção em setupFirestoreListeners"); return; }
             const q = query(acionamentosRef);
-
-            // Armazena a função de unsubscribe
             firestoreUnsubscribe = onSnapshot(q, (snapshot) => {
                 acionamentosData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 acionamentosData.sort((a, b) => {
@@ -1849,166 +1380,115 @@ Status Atual: ${status.toUpperCase()}
                 }
             }, (error) => {
                 console.error("Erro ao ouvir o Firestore:", error);
-                showConfirmationModal('Erro de Conexão', `Não foi possível carregar os dados em tempo real: ${error.message}. Se a mensagem mencionar um índice, verifique a consola do Firebase.`, 'error');
+                showConfirmationModal('Erro de Conexão', `Não foi possível carregar os dados: ${error.message}.`, 'error');
             });
         }
 
-        // --------------------------
-        // Funções de Auth (MODIFICADAS)
-        // --------------------------
-
+        // --- Funções de Auth ---
         function toggleAuthForms(view) {
-            if (view === 'login') {
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
-                tabLogin.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-primary-blue');
-                tabLogin.classList.remove('text-gray-500', 'dark:text-gray-400');
-                tabRegister.classList.add('text-gray-500', 'dark:text-gray-400');
-                tabRegister.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-primary-blue');
-            } else {
-                loginForm.classList.add('hidden');
-                registerForm.classList.remove('hidden');
-                tabRegister.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-primary-blue');
-                tabRegister.classList.remove('text-gray-500', 'dark:text-gray-400');
-                tabLogin.classList.add('text-gray-500', 'dark:text-gray-400');
-                tabLogin.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-primary-blue');
-            }
-            authError.classList.add('hidden');
-            registerError.classList.add('hidden');
-            registerError.classList.remove('text-green-600'); // Garante que a cor de sucesso saia
-            registerError.classList.add('text-red-500'); // Volta ao padrão de erro
-        }
+            const activeClasses = ['bg-gray-100', 'dark:bg-gray-700', 'text-red-600'];
+            const inactiveClasses = ['text-gray-500', 'dark:text-gray-400'];
 
+            if (view === 'login') {
+                loginForm.classList.remove('hidden'); registerForm.classList.add('hidden');
+                tabLogin.classList.add(...activeClasses);
+                tabLogin.classList.remove(...inactiveClasses);
+                tabRegister.classList.add(...inactiveClasses);
+                tabRegister.classList.remove(...activeClasses);
+            } else {
+                loginForm.classList.add('hidden'); registerForm.classList.remove('hidden');
+                tabRegister.classList.add(...activeClasses);
+                tabRegister.classList.remove(...inactiveClasses);
+                tabLogin.classList.add(...inactiveClasses);
+                tabLogin.classList.remove(...activeClasses);
+            }
+            authError.classList.add('hidden'); registerError.classList.add('hidden');
+            registerError.classList.remove('text-green-600', 'dark:text-green-400');
+            registerError.classList.add('text-red-500');
+        }
         async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-            loginButton.disabled = true;
-            loginButton.textContent = 'A entrar...';
+            loginButton.disabled = true; loginButton.textContent = 'A entrar...';
             authError.classList.add('hidden');
-
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                
-                // MODIFICAÇÃO: Verifica se o email foi confirmado
                 if (userCredential.user && !userCredential.user.emailVerified) {
                     authError.textContent = 'Email não verificado! Por favor, clique no link enviado para o seu email.';
                     authError.classList.remove('hidden');
-                    await signOut(auth); // Desloga o utilizador
+                    await signOut(auth);
                 }
-                // Se verificado, o onAuthStateChanged tratará do resto
-                
             } catch (error) {
-                if (error.code === 'auth/invalid-credential') {
-                     authError.textContent = 'Email ou senha inválidos.';
-                } else {
-                     authError.textContent = `Erro ao entrar: ${error.message}`;
-                }
+                if (error.code === 'auth/invalid-credential') { authError.textContent = 'Email ou senha inválidos.'; }
+                else { authError.textContent = `Erro ao entrar: ${error.message}`; }
                 authError.classList.remove('hidden');
             } finally {
-                loginButton.disabled = false;
-                loginButton.textContent = 'Entrar';
+                loginButton.disabled = false; loginButton.textContent = 'Entrar';
             }
         }
-
         async function handleRegister(e) {
             e.preventDefault();
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
-            registerButton.disabled = true;
-            registerButton.textContent = 'A registar...';
-            registerError.classList.add('hidden'); // Esconde erros antigos
-            registerError.classList.remove('text-red-500'); // Remove cor de erro
-            registerError.classList.add('text-green-600', 'dark:text-green-400'); // Adiciona cor de sucesso
-
+            registerButton.disabled = true; registerButton.textContent = 'A registar...';
+            registerError.classList.add('hidden');
+            registerError.classList.remove('text-red-500');
+            registerError.classList.add('text-green-600', 'dark:text-green-400');
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                
-                // NOVO: Enviar email de verificação
                 await sendEmailVerification(userCredential.user);
-                
-                // NOVO: Deslogar o utilizador para forçar a verificação
                 await signOut(auth);
-
-                // NOVO: Mostrar mensagem de sucesso
                 registerError.textContent = 'Registo concluído! Por favor, verifique o seu email para ativar a conta.';
                 registerError.classList.remove('hidden');
-                
                 registerForm.reset();
-
             } catch (error) {
-                registerError.classList.add('text-red-500'); // Garante cor de erro
+                registerError.classList.add('text-red-500');
                 registerError.classList.remove('text-green-600', 'dark:text-green-400');
                 registerError.textContent = `Erro ao registar: ${error.message}`;
                 registerError.classList.remove('hidden');
             } finally {
-                registerButton.disabled = false;
-                registerButton.textContent = 'Criar Conta';
+                registerButton.disabled = false; registerButton.textContent = 'Criar Conta';
             }
         }
-
         async function handleLogout() {
-            try {
-                await signOut(auth);
-                // onAuthStateChanged tratará do resto
-            } catch (error) {
-                console.error("Erro ao sair:", error);
-            }
+            try { await signOut(auth); }
+            catch (error) { console.error("Erro ao sair:", error); }
         }
 
-
-        // --------------------------
-        // Event Listeners (MODIFICADO)
-        // --------------------------
-
+        // --- Event Listeners ---
         selectMonthFilter.addEventListener('change', (event) => {
             currentMonthFilter = event.target.value;
             renderAcionamentos(acionamentosData);
         });
-
         window.switchView = switchView;
         window.exportToCSV = exportToCSV;
         window.onload = initializeAppLogic;
         formAcionamento.addEventListener('submit', adicionarAcionamento);
         window.closeModal = closeModal;
         window.showNotificationModal = showNotificationModal;
-
-        // Listener para a GRELHA DE CARTÕES
         listaAcionamentos.addEventListener('click', (event) => {
-            handleDeleteClick(event);
-            handleViewOSClick(event);
-            handleEditAcionamento(event);
-            handleFinalDeleteClick(event);
+            handleDeleteClick(event); handleViewOSClick(event);
+            handleEditAcionamento(event); handleFinalDeleteClick(event);
         });
-
-        // Listener para o CORPO DA TABELA
         if (listaAcionamentosTabela) {
             listaAcionamentosTabela.addEventListener('click', (event) => {
-                handleDeleteClick(event);
-                handleViewOSClick(event);
-                handleEditAcionamento(event);
-                handleFinalDeleteClick(event);
+                handleDeleteClick(event); handleViewOSClick(event);
+                handleEditAcionamento(event); handleFinalDeleteClick(event);
             });
         }
-
-        // Listener para o botão de confirmação no modal de senha
         const confirmPasswordDeleteBtn = document.getElementById('confirmPasswordDeleteBtn');
         if (confirmPasswordDeleteBtn) {
             confirmPasswordDeleteBtn.addEventListener('click', checkPasswordAndDelete);
         }
-
-        // Listener para a tecla Enter no campo de senha
         const passwordInput = document.getElementById('passwordInput');
         if (passwordInput) {
             passwordInput.addEventListener('keypress', function(event) {
                 if (event.key === 'Enter') {
-                    event.preventDefault();
-                    checkPasswordAndDelete();
+                    event.preventDefault(); checkPasswordAndDelete();
                 }
             });
         }
-
-        // NOVO: Listeners para Auth
         loginForm.addEventListener('submit', handleLogin);
         registerForm.addEventListener('submit', handleRegister);
         logoutButton.addEventListener('click', handleLogout);
