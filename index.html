@@ -238,7 +238,7 @@
         <div class="flex-1 flex flex-col overflow-hidden">
             <header class="bg-white dark:bg-gray-800 shadow-sm p-4 z-0">
                  <h1 class="text-2xl md:text-3xl font-bold primary-blue dark:text-gray-100">
-                     Gestão de Acionamentos Munck - Engemaf
+                      Gestão de Acionamentos Munck - Engemaf
                  </h1>
             </header>
             
@@ -258,11 +258,20 @@
                     </div>
 
                     <form id="formAcionamento">
-                        <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-6 gap-6">
                             <div>
                                 <label for="data" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data do Acionamento</label>
                                 <input type="date" id="data" name="data" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2">
                             </div>
+                            
+                            <div>
+                                <label for="tipoCaminhao" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo Caminhão</label>
+                                <select id="tipoCaminhao" name="tipoCaminhao" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2">
+                                    <option value="20T">Caminhão 20T</option>
+                                    <option value="45T">Caminhão 45T</option>
+                                </select>
+                            </div>
+
                             <div>
                                 <label for="solicitante" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Solicitante</label>
                                 <select id="solicitante" name="solicitante" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 p-2">
@@ -334,6 +343,7 @@
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Data</th>
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Solicitante</th>
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Local</th>
+                                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Caminhão</th>
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Motorista</th>
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Chamado GLPI</th>
                                     <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">OS Engemaf</th>
@@ -490,10 +500,11 @@
         messagingSenderId: "467162710119",
         appId: "1:467162710119:web:3d2bf99ec41897e27c54c2"
       });
-      // MODIFICADO: O __app_id deve corresponder ao seu projectId.
       const __app_id = "engemaf";
       const __initial_auth_token = null;
     </script>
+
+
     <script type="module">
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -511,8 +522,15 @@
         let firestoreUnsubscribe = null;
 
         // --- Constantes e Regras de Negócio ---
-        const HOUR_RATE = 370.00;
-        const KM_RATE = 12.50;
+        
+        // ALTERAÇÃO AQUI: Valores de KM e HORA modificados
+        const KM_RATE = 4.50;
+        const TRUCK_TYPES = {
+            '20T': { label: 'Caminhão 20T', rate: 248.73 },
+            '45T': { label: 'Caminhão 45T', rate: 264.40 }
+        };
+        const DEFAULT_TRUCK_TYPE = '20T'; // Padrão para dados antigos
+
         const NOTIFICATION_EMAIL = 'sidney.matos@vinci@highways.com.br';
         const DELETE_PASSWORD = '020391';
 
@@ -600,10 +618,15 @@
             const d = date instanceof Date ? date : (date.toDate ? date.toDate() : new Date(date));
             return d.toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit' });
         }
-        function calcularCustoTotal(horas, km) {
+        
+        // ALTERAÇÃO AQUI: Função de cálculo modificada
+        function calcularCustoTotal(horas, km, tipoCaminhao) {
             const h = parseFloat(horas) || 0; const k = parseFloat(km) || 0;
-            return (h * HOUR_RATE) + (k * KM_RATE);
+            const tipo = tipoCaminhao || DEFAULT_TRUCK_TYPE;
+            const hourRate = TRUCK_TYPES[tipo] ? TRUCK_TYPES[tipo].rate : TRUCK_TYPES[DEFAULT_TRUCK_TYPE].rate;
+            return (h * hourRate) + (k * KM_RATE);
         }
+
         function getCollectionRef() {
             if (!db) { console.warn("getCollectionRef foi chamada mas db está em falta."); return null; }
             const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -676,6 +699,10 @@
             const chamadoGLPI = document.getElementById('chamadoGLPI').value;
             const osLocamunck = document.getElementById('osLocamunck').value.trim() || null;
             const observacao = document.getElementById('observacao').value.trim() || null;
+            
+            // NOVO CAMPO
+            const tipoCaminhao = document.getElementById('tipoCaminhao').value;
+            
             const inputDate = new Date(data);
             if (isNaN(inputDate.getTime())) {
                  showConfirmationModal('Data Inválida', 'Por favor, insira uma data de acionamento válida.', 'error'); return;
@@ -684,6 +711,7 @@
             const newAcionamento = {
                 data: utcDate, solicitante, local, motorista: null, horas: null, km: null,
                 custoTotal: 0, chamadoGLPI, osLocamunck, observacao,
+                tipoCaminhao: tipoCaminhao, // NOVO CAMPO ADICIONADO
                 status: STATUSES.ABERTO, createdAt: serverTimestamp()
             };
             const acionamentosRef = getCollectionRef();
@@ -759,6 +787,7 @@
             }
         }
 
+        // ALTERAÇÃO AQUI: Função de renderização principal modificada
         function renderAcionamentos(data) {
             let totalHoras = 0, totalKm = 0, totalGeral = 0;
             const filteredData = data.filter(a => {
@@ -767,12 +796,24 @@
                 const dateInUTC = new Date(acionamentoDate.getUTCFullYear(), acionamentoDate.getUTCMonth(), acionamentoDate.getUTCDate());
                 return dateInUTC.toISOString().substring(0, 7) === currentMonthFilter;
             });
+
+            // Lógica de cálculo de totais do período
             filteredData.forEach(acionamento => {
-                const custoTotal = calcularCustoTotal(acionamento.horas || 0, acionamento.km || 0);
-                totalHoras += (acionamento.horas || 0) * HOUR_RATE;
-                totalKm += (acionamento.km || 0) * KM_RATE;
+                const tipoCaminhao = acionamento.tipoCaminhao || DEFAULT_TRUCK_TYPE;
+                const hourRate = TRUCK_TYPES[tipoCaminhao] ? TRUCK_TYPES[tipoCaminhao].rate : TRUCK_TYPES[DEFAULT_TRUCK_TYPE].rate;
+                
+                const h = acionamento.horas || 0;
+                const k = acionamento.km || 0;
+
+                const custoH = h * hourRate;
+                const custoK = k * KM_RATE;
+                const custoTotal = custoH + custoK;
+
+                totalHoras += custoH; // totalHoras é monetário
+                totalKm += custoK;    // totalKm é monetário
                 totalGeral += custoTotal;
             });
+
             if (historicoViewMode === 'cards') {
                 const htmlCards = filteredData.map(acionamento => {
                     const acionamentoDate = acionamento.data.toDate ? acionamento.data.toDate() : new Date(acionamento.data);
@@ -780,7 +821,12 @@
                     const kmDisplay = acionamento.km !== null ? (acionamento.km).toFixed(1) : 'N/A';
                     const motoristaDisplay = acionamento.motorista || 'N/A';
                     const osLocamunckDisplay = acionamento.osLocamunck || 'N/A';
-                    const custoTotal = calcularCustoTotal(acionamento.horas || 0, acionamento.km || 0);
+                    
+                    // Lógica de cálculo e tipo de caminhão
+                    const tipoCaminhao = acionamento.tipoCaminhao || DEFAULT_TRUCK_TYPE;
+                    const tipoCaminhaoLabel = TRUCK_TYPES[tipoCaminhao] ? TRUCK_TYPES[tipoCaminhao].label : TRUCK_TYPES[DEFAULT_TRUCK_TYPE].label;
+                    const custoTotal = calcularCustoTotal(acionamento.horas || 0, acionamento.km || 0, tipoCaminhao);
+                    
                     const status = acionamento.status || STATUSES.ABERTO;
                     const statusColorClass = getStatusColor(status);
                     const cardBorderClass = getStatusCardBorder(status);
@@ -824,6 +870,7 @@
                                     <div><label class="text-xs text-gray-500 dark:text-gray-400">Solicitante</label><p class="text-sm font-medium text-gray-800 dark:text-gray-100">${acionamento.solicitante}</p></div>
                                     <div><label class="text-xs text-gray-500 dark:text-gray-400">Motorista</label><p class="text-sm font-medium text-gray-800 dark:text-gray-100">${motoristaDisplay}</p></div>
                                     <div><label class="text-xs text-gray-500 dark:text-gray-400">Data</label><p class="text-sm font-medium text-gray-800 dark:text-gray-100">${formatDate(acionamentoDate)}</p></div>
+                                    <div><label class="text-xs text-gray-500 dark:text-gray-400">Caminhão</label><p class="text-sm font-medium text-gray-800 dark:text-gray-100">${tipoCaminhaoLabel}</p></div>
                                 </div>
                             </div>
                             <div class="bg-gray-50 dark:bg-gray-700/50 px-4 py-3 mt-auto border-t dark:border-gray-700">
@@ -852,7 +899,12 @@
                     const kmDisplay = acionamento.km !== null ? (acionamento.km).toFixed(1) : 'N/A';
                     const motoristaDisplay = acionamento.motorista || 'N/A';
                     const osLocamunckDisplay = acionamento.osLocamunck || 'N/A';
-                    const custoTotal = calcularCustoTotal(acionamento.horas || 0, acionamento.km || 0);
+                    
+                    // Lógica de cálculo e tipo de caminhão
+                    const tipoCaminhao = acionamento.tipoCaminhao || DEFAULT_TRUCK_TYPE;
+                    const tipoCaminhaoLabel = TRUCK_TYPES[tipoCaminhao] ? TRUCK_TYPES[tipoCaminhao].label : TRUCK_TYPES[DEFAULT_TRUCK_TYPE].label;
+                    const custoTotal = calcularCustoTotal(acionamento.horas || 0, acionamento.km || 0, tipoCaminhao);
+
                     const status = acionamento.status || STATUSES.ABERTO;
                     const statusColorClass = getStatusColor(status);
                     const isFinalizado = status === STATUSES.ENCERRADO || status === STATUSES.CANCELADO;
@@ -872,6 +924,7 @@
                             <td data-label="Data" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${formatDate(acionamentoDate)}</td>
                             <td data-label="Solicitante" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${acionamento.solicitante}</td>
                             <td data-label="Local" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${acionamento.local}</td>
+                            <td data-label="Caminhão" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${tipoCaminhaoLabel}</td>
                             <td data-label="Motorista" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${motoristaDisplay}</td>
                             <td data-label="Chamado GLPI" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${acionamento.chamadoGLPI}</td>
                             <td data-label="OS Engemaf" class="py-2 px-4 whitespace-nowrap text-gray-800 dark:text-gray-100">${osLocamunckDisplay}</td>
@@ -882,7 +935,8 @@
                             <td data-label="Ações" class="py-2 px-4 flex space-x-2 justify-center md:justify-start">${actionButtons}</td>
                         </tr>`;
                 }).join('');
-                listaAcionamentosTabela.innerHTML = htmlLista || `<tr><td colspan="11" class="text-center py-4 text-gray-500 dark:text-gray-400">Nenhum acionamento encontrado.</td></tr>`;
+                // ALTERAÇÃO AQUI: Colspan mudou de 11 para 12
+                listaAcionamentosTabela.innerHTML = htmlLista || `<tr><td colspan="12" class="text-center py-4 text-gray-500 dark:text-gray-400">Nenhum acionamento encontrado.</td></tr>`;
                 containerTabelaHistorico.classList.remove('hidden');
                 listaAcionamentos.classList.add('hidden');
             }
@@ -896,13 +950,24 @@
                 renderDashboard(filteredData);
             }
         }
+        
+        // ALTERAÇÃO AQUI: Lógica de totais gerais modificada
         function renderTotaisGerais(data) {
             let totalHorasGeral = 0, totalKmGeral = 0, totalGeralGeral = 0;
             data.forEach(acionamento => {
                 if (acionamento.status !== STATUSES.CANCELADO) {
-                    const custoTotal = calcularCustoTotal(acionamento.horas || 0, acionamento.km || 0);
-                    totalHorasGeral += (acionamento.horas || 0) * HOUR_RATE;
-                    totalKmGeral += (acionamento.km || 0) * KM_RATE;
+                    const tipoCaminhao = acionamento.tipoCaminhao || DEFAULT_TRUCK_TYPE;
+                    const hourRate = TRUCK_TYPES[tipoCaminhao] ? TRUCK_TYPES[tipoCaminhao].rate : TRUCK_TYPES[DEFAULT_TRUCK_TYPE].rate;
+                    
+                    const h = acionamento.horas || 0;
+                    const k = acionamento.km || 0;
+
+                    const custoH = h * hourRate;
+                    const custoK = k * KM_RATE;
+                    const custoTotal = custoH + custoK;
+
+                    totalHorasGeral += custoH;
+                    totalKmGeral += custoK;
                     totalGeralGeral += custoTotal;
                 }
             });
@@ -913,6 +978,7 @@
                 document.getElementById('totalGeralGeral').textContent = formatCurrency(totalGeralGeral);
             }
         }
+
         function renderDashboard(data) {
             const rankingLocaisEl = document.getElementById('rankingLocais');
             const rankingSolicitantesEl = document.getElementById('rankingSolicitantes');
@@ -1025,6 +1091,7 @@
             notificationModal.classList.remove('hidden');
             notificationModal.classList.add('flex');
         }
+
         function showConfirmationModal(title, message, type, onConfirm) {
             const confirmModal = document.getElementById('confirmationModal');
             document.getElementById('confirmationModalTitle').textContent = title;
@@ -1043,11 +1110,14 @@
                 confirmButtonText = 'Sim, Confirmar';
             } else if (type === 'error') {
                  iconHtml = `<svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            } else if (type === 'success') { // <-- NOVA CONDIÇÃO
+                 iconHtml = `<svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
             }
+
             iconContainer.innerHTML = iconHtml;
             const cancelButton = `<button onclick="closeModal(null, 'confirmationModal')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition duration-150">Cancelar</button>`;
             
-            if (type === 'error') {
+            if (type === 'error' || type === 'success') { // <-- LÓGICA MODIFICADA
                  footer.innerHTML = `<button onclick="closeModal(null, 'confirmationModal')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition duration-150">OK</button>`;
             } else {
                 if (type === 'closure') {
@@ -1065,6 +1135,7 @@
             confirmModal.classList.remove('hidden');
             confirmModal.classList.add('flex');
         }
+
         function dmsToDecimal(dmsString) {
             const cleanedString = dmsString.trim().toUpperCase();
             const parts = cleanedString.split(/[^\d\.]+/).filter(Boolean);
@@ -1097,19 +1168,29 @@
             };
             contentEl.innerHTML = createUnitList('Praças de Pedágio (PP)', pps) + createUnitList('Serviços de Atendimento ao Utilizador (SAU)', saus);
         }
+
+        // ALTERAÇÃO AQUI: Geração de OS modificada
         function generateOSContent(acionamento) {
             const dataAcionamento = acionamento.data.toDate ? acionamento.data.toDate() : new Date(acionamento.data);
+            
+            const tipoCaminhao = acionamento.tipoCaminhao || DEFAULT_TRUCK_TYPE;
+            const tipoCaminhaoLabel = TRUCK_TYPES[tipoCaminhao] ? TRUCK_TYPES[tipoCaminhao].label : "N/A";
+            const hourRate = TRUCK_TYPES[tipoCaminhao] ? TRUCK_TYPES[tipoCaminhao].rate : TRUCK_TYPES[DEFAULT_TRUCK_TYPE].rate;
+
             const horas = acionamento.horas || 0; const km = acionamento.km || 0;
-            const custoHoras = horas * HOUR_RATE; const custoKm = km * KM_RATE;
-            const custoTotal = calcularCustoTotal(horas, km);
+            const custoHoras = horas * hourRate; const custoKm = km * KM_RATE;
+            const custoTotal = custoHoras + custoKm;
+
             const status = acionamento.status || STATUSES.ABERTO;
             const observacao = acionamento.observacao || 'N/A';
             const osLocamunck = acionamento.osLocamunck || 'N/A';
+            
             if (status === STATUSES.CANCELADO) {
                 return `[ACIONAMENTO CANCELADO]\n------------------------------------------------------\nID do Registo: ${acionamento.id}\nStatus Atual: ${status.toUpperCase()}\nData: ${formatDate(dataAcionamento)}\nSolicitante: ${acionamento.solicitante}\nLocal: ${acionamento.local}\nChamado GLPI: ${acionamento.chamadoGLPI}\nOS Engemaf: ${osLocamunck}\nMOTIVO DO CANCELAMENTO:\n${observacao}\n------------------------------------------------------\n[FIM DA OS]`;
             }
-            return `[ORDEM DE SERVIÇO - ACIONAMENTO MUNCK]\n------------------------------------------------------\nID do Registo: ${acionamento.id}\nStatus Atual: ${status.toUpperCase()}\n1. INFORMAÇÕES BÁSICAS:\n    Data do Acionamento: ${formatDate(dataAcionamento)}\n    Solicitante: ${acionamento.solicitante}\n    Motorista: ${acionamento.motorista || 'N/A'}\n    Local: ${acionamento.local}\n    Chamado GLPI: ${acionamento.chamadoGLPI}\n    OS Engemaf: ${osLocamunck}\n2. DADOS DE CUSTO:\n    Tempo de Serviço: ${(horas).toFixed(2)} Horas\n    Km Deslocamento: ${(km).toFixed(1)} Km\n3. CÁLCULO FINANCEIRO:\n    Custo Horas (${formatCurrency(HOUR_RATE)}/h): ${formatCurrency(custoHoras)}\n    Custo Km (${formatCurrency(KM_RATE)}/km): ${formatCurrency(custoKm)}\n    --------------------------------------------------\n    CUSTO TOTAL: ${formatCurrency(custoTotal)}\n4. OBSERVAÇÕES:\n    ${observacao}\n5. INFORMAÇÕES DE CONTACTO:\n    E-mail para Notificação: ${NOTIFICATION_EMAIL}\n------------------------------------------------------\n[FIM DA OS]`;
+            return `[ORDEM DE SERVIÇO - ACIONAMENTO MUNCK]\n------------------------------------------------------\nID do Registo: ${acionamento.id}\nStatus Atual: ${status.toUpperCase()}\n1. INFORMAÇÕES BÁSICAS:\n   Data do Acionamento: ${formatDate(dataAcionamento)}\n   Tipo Caminhão: ${tipoCaminhaoLabel}\n   Solicitante: ${acionamento.solicitante}\n   Motorista: ${acionamento.motorista || 'N/A'}\n   Local: ${acionamento.local}\n   Chamado GLPI: ${acionamento.chamadoGLPI}\n   OS Engemaf: ${osLocamunck}\n2. DADOS DE CUSTO:\n   Tempo de Serviço: ${(horas).toFixed(2)} Horas\n   Km Deslocamento: ${(km).toFixed(1)} Km\n3. CÁLCULO FINANCEIRO:\n   Custo Horas (${formatCurrency(hourRate)}/h): ${formatCurrency(custoHoras)}\n   Custo Km (${formatCurrency(KM_RATE)}/km): ${formatCurrency(custoKm)}\n   --------------------------------------------------\n   CUSTO TOTAL: ${formatCurrency(custoTotal)}\n4. OBSERVAÇÕES:\n   ${observacao}\n5. INFORMAÇÕES DE CONTACTO:\n   E-mail para Notificação: ${NOTIFICATION_EMAIL}\n------------------------------------------------------\n[FIM DA OS]`;
         }
+
         function handleViewOSClick(event) {
             const button = event.target.closest('[data-action="viewOS"]'); if (!button) return;
             const id = button.dataset.id;
@@ -1128,6 +1209,8 @@
             });
             modal.classList.remove('hidden'); modal.classList.add('flex');
         }
+
+        // ALTERAÇÃO AQUI: Modal de Edição modificado
         function handleEditAcionamento(event) {
             const button = event.target.closest('[data-action="edit"]'); if (!button) return;
             const id = button.dataset.id;
@@ -1136,38 +1219,57 @@
             if (originalStatus === STATUSES.ENCERRADO || originalStatus === STATUSES.CANCELADO) return;
             const dataAcionamento = acionamento.data.toDate ? acionamento.data.toDate() : new Date(acionamento.data);
             const dateValue = new Date(dataAcionamento.getTime() + dataAcionamento.getTimezoneOffset() * 60000).toISOString().substring(0, 10);
+            
             const solicitanteOptions = SOLICITANTES.map(s => `<option value="${s}" ${s === acionamento.solicitante ? 'selected' : ''}>${s}</option>`).join('');
             const localOptions = LOCAIS.map(l => `<option value="${l.nome} - ${l.cidade}" ${`${l.nome} - ${l.cidade}` === acionamento.local ? 'selected' : ''}>${l.nome} - ${l.cidade}</option>`).join('');
             const statusOptions = Object.values(STATUSES).map(s => `<option value="${s}" ${s === originalStatus ? 'selected' : ''}>${s}</option>`).join('');
+
+            // Novas Opções de Caminhão
+            const tipoCaminhao = acionamento.tipoCaminhao || DEFAULT_TRUCK_TYPE;
+            const tipoCaminhaoOptions = Object.keys(TRUCK_TYPES).map(key => `<option value="${key}" ${key === tipoCaminhao ? 'selected' : ''}>${TRUCK_TYPES[key].label}</option>`).join('');
+
             const inputStyle = "mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 p-2 shadow-sm focus:border-red-500 focus:ring-red-500";
             const labelStyle = "block text-sm font-medium text-gray-700 dark:text-gray-300";
             modalTitle.textContent = `Editar Acionamento - OS ${acionamento.chamadoGLPI}`;
-             modalBody.innerHTML = `
+                 modalBody.innerHTML = `
                 <form id="formEditAcionamento">
                     <input type="hidden" id="editId" value="${id}">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div><label for="editData" class="${labelStyle}">Data</label><input type="date" id="editData" value="${dateValue}" required class="${inputStyle}"></div>
+                        <div>
+                            <label for="editTipoCaminhao" class="${labelStyle}">Tipo Caminhão</label>
+                            <select id="editTipoCaminhao" required class="${inputStyle}">${tipoCaminhaoOptions}</select>
+                        </div>
                         <div><label for="editStatus" class="${labelStyle}">Status</label><select id="editStatus" required class="${inputStyle}">${statusOptions}</select></div>
-                        <div><label for="editSolicitante" class="${labelStyle}">Solicitante</label><select id="editSolicitante" required class="${inputStyle}">${solicitanteOptions}</select></div>
-                        <div><label for="editLocal" class="${labelStyle}">Local</label><select id="editLocal" required class="${inputStyle}">${localOptions}</select></div>
                     </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                         <div class="md:col-span-1"><label for="editSolicitante" class="${labelStyle}">Solicitante</label><select id="editSolicitante" required class="${inputStyle}">${solicitanteOptions}</select></div>
+                         <div class="md:col-span-2"><label for="editLocal" class="${labelStyle}">Local</label><select id="editLocal" required class="${inputStyle}">${localOptions}</select></div>
+                    </div>
+                    
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                         <div><label for="editMotorista" class="${labelStyle}">Motorista</label><input type="text" id="editMotorista" value="${acionamento.motorista || ''}" required class="${inputStyle}"></div>
                         <div><label for="editHoras" class="${labelStyle}">Horas</label><input type="number" step="0.01" min="0" id="editHoras" value="${acionamento.horas !== null ? acionamento.horas.toFixed(2) : ''}" class="${inputStyle}"></div>
                         <div><label for="editKm" class="${labelStyle}">Km</label><input type="number" step="0.1" min="0" id="editKm" value="${acionamento.km !== null ? acionamento.km.toFixed(1) : ''}" class="${inputStyle}"></div>
                     </div>
+                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         <div><label for="editChamadoGLPI" class="${labelStyle}">Chamado GLPI</label><input type="text" id="editChamadoGLPI" value="${acionamento.chamadoGLPI}" required class="${inputStyle}"></div>
                         <div><label for="editOsLocamunck" class="${labelStyle}">OS Engemaf</label><input type="text" id="editOsLocamunck" value="${acionamento.osLocamunck || ''}" class="${inputStyle}"></div>
                     </div>
+                    
                     <div class="mt-4"><label for="editObservacao" class="${labelStyle}">Observação</label><textarea id="editObservacao" rows="3" class="${inputStyle}" placeholder="Descreva a atividade...">${acionamento.observacao || ''}</textarea></div>
                 </form>`;
             modalFooter.innerHTML = `<button id="saveEditBtn" class="btn-gradient-red px-4 py-2 rounded-md font-semibold">Guardar Alterações</button><button onclick="closeModal(null, 'modal')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-md">Cancelar</button>`;
+            
             const editStatusSelect = document.getElementById('editStatus');
             const editMotoristaInput = document.getElementById('editMotorista');
             const editHorasInput = document.getElementById('editHoras');
             const editKmInput = document.getElementById('editKm');
             const editObservacaoTextarea = document.getElementById('editObservacao');
+            
             const toggleFieldsBasedOnStatus = () => {
                 const selectedStatus = editStatusSelect.value;
                 if (selectedStatus === STATUSES.CANCELADO) {
@@ -1182,12 +1284,17 @@
             };
             editStatusSelect.addEventListener('change', toggleFieldsBasedOnStatus);
             toggleFieldsBasedOnStatus();
+            
             document.getElementById('saveEditBtn').addEventListener('click', async () => {
                 const editId = document.getElementById('editId').value;
                 const editStatus = document.getElementById('editStatus').value;
                 const editObservacao = document.getElementById('editObservacao').value.trim();
                 const editMotorista = document.getElementById('editMotorista').value;
                 const editOsLocamunck = document.getElementById('editOsLocamunck').value.trim() || null;
+                
+                // Novo campo
+                const editTipoCaminhao = document.getElementById('editTipoCaminhao').value;
+
                 if (editStatus === STATUSES.CANCELADO) {
                     if (!editObservacao) {
                         showConfirmationModal('Campo Obrigatório', 'Para cancelar, "Observação" deve ser preenchido com o motivo.', 'error'); return;
@@ -1199,18 +1306,21 @@
                 }
                 const editDate = new Date(document.getElementById('editData').value);
                  if (isNaN(editDate.getTime())) {
-                       showConfirmationModal('Data Inválida', 'Por favor, insira uma data válida.', 'error'); return;
+                        showConfirmationModal('Data Inválida', 'Por favor, insira uma data válida.', 'error'); return;
                  }
                 const utcDate = new Date(editDate.getUTCFullYear(), editDate.getUTCMonth(), editDate.getUTCDate());
                 let horasValue, kmValue, custoTotalValue, motoristaValue;
+                
                 if (editStatus === STATUSES.CANCELADO) {
                     motoristaValue = null; horasValue = null; kmValue = null; custoTotalValue = 0;
                 } else {
                     motoristaValue = editMotorista;
                     horasValue = document.getElementById('editHoras').value ? parseFloat(document.getElementById('editHoras').value) : null;
                     kmValue = document.getElementById('editKm').value ? parseFloat(document.getElementById('editKm').value) : null;
-                    custoTotalValue = calcularCustoTotal(horasValue || 0, kmValue || 0);
+                    // Cálculo de custo modificado
+                    custoTotalValue = calcularCustoTotal(horasValue || 0, kmValue || 0, editTipoCaminhao);
                 }
+
                 const updatedData = {
                     data: utcDate, status: editStatus,
                     solicitante: document.getElementById('editSolicitante').value,
@@ -1218,8 +1328,10 @@
                     motorista: motoristaValue, horas: horasValue, km: kmValue,
                     chamadoGLPI: document.getElementById('editChamadoGLPI').value,
                     osLocamunck: editOsLocamunck, observacao: editObservacao || null,
+                    tipoCaminhao: editTipoCaminhao, // Campo novo
                     custoTotal: custoTotalValue,
                 };
+                
                 closeModal();
                 const isFinalizing = editStatus === STATUSES.ENCERRADO || editStatus === STATUSES.CANCELADO;
                 const wasFinalized = originalStatus === STATUSES.ENCERRADO || originalStatus === STATUSES.CANCELADO;
@@ -1236,6 +1348,7 @@
             });
             modal.classList.remove('hidden'); modal.classList.add('flex');
         }
+
         function handleDeleteClick(event) {
             const button = event.target.closest('[data-action="delete"]'); if (!button) return;
             const id = button.dataset.id;
@@ -1268,6 +1381,7 @@
         }
 
         // --- Exportação ---
+        // ALTERAÇÃO AQUI: Exportação CSV modificada
         function exportToCSV() {
             const filteredData = acionamentosData.filter(a => {
                 const acionamentoDate = a.data?.toDate ? a.data.toDate() : (a.data ? new Date(a.data) : null);
@@ -1276,16 +1390,27 @@
                 return dateInUTC.toISOString().substring(0, 7) === currentMonthFilter;
             });
             if (filteredData.length === 0) return;
-            const header = ["DATA", "LOCAL", "CHAMADO", "VALOR DAS HORAS", "VALOR DO KM", "TOTAL"];
+            
+            // Novo Header
+            const header = ["DATA", "LOCAL", "CHAMADO", "TIPO CAMINHAO", "VALOR DAS HORAS", "VALOR DO KM", "TOTAL"];
+            
             const csvRows = filteredData.map(a => {
                 const acionamentoDate = a.data.toDate ? a.data.toDate() : new Date(a.data);
+                
+                const tipoCaminhao = a.tipoCaminhao || DEFAULT_TRUCK_TYPE;
+                const tipoCaminhaoLabel = TRUCK_TYPES[tipoCaminhao] ? TRUCK_TYPES[tipoCaminhao].label : "N/A";
+                const hourRate = TRUCK_TYPES[tipoCaminhao] ? TRUCK_TYPES[tipoCaminhao].rate : 0;
+                
                 const horas = a.horas || 0; const km = a.km || 0;
-                const custoHoras = horas * HOUR_RATE; const custoKm = km * KM_RATE;
+                const custoHoras = horas * hourRate; const custoKm = km * KM_RATE;
                 const custoTotal = custoHoras + custoKm;
+                
                 const custoHorasValue = custoHoras.toFixed(2).replace('.', ',');
                 const custoKmValue = custoKm.toFixed(2).replace('.', ',');
                 const custoTotalValue = custoTotal.toFixed(2).replace('.', ',');
+                
                 return [`"${formatDate(acionamentoDate)}"`,`"${a.local}"`,`"${a.chamadoGLPI}"`,
+                    `"${tipoCaminhaoLabel}"`, // Novo Campo
                     `"${custoHorasValue}"`,`"${custoKmValue}"`,`"${custoTotalValue}"`].join(';');
             });
             const csvContent = ["\uFEFF", header.join(';'), ...csvRows].join('\n');
@@ -1427,22 +1552,36 @@
                 loginButton.disabled = false; loginButton.textContent = 'Entrar';
             }
         }
+
         async function handleRegister(e) {
             e.preventDefault();
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             registerButton.disabled = true; registerButton.textContent = 'A registar...';
             registerError.classList.add('hidden');
-            registerError.classList.remove('text-red-500');
-            registerError.classList.add('text-green-600', 'dark:text-green-400');
+            
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 await sendEmailVerification(userCredential.user);
                 await signOut(auth);
-                registerError.textContent = 'Registo concluído! Por favor, verifique o seu email para ativar a conta.';
-                registerError.classList.remove('hidden');
+
+                // NOVO: Chamar o modal de confirmação
+                const userEmail = userCredential.user.email;
+                showConfirmationModal(
+                    'Registo Quase Concluído!',
+                    `Enviámos um link de verificação para <strong>${userEmail}</strong>.
+                     <br><br>
+                     Por favor, verifique a sua caixa de entrada.
+                     <br><br>
+                     <strong>Importante:</strong> Se não o encontrar, verifique a sua pasta de <strong>Lixo (Lixeira)</strong> ou <strong>Spam</strong>.`,
+                    'success' // Usar o novo tipo 'success'
+                );
+                
                 registerForm.reset();
+                toggleAuthForms('login'); // Mudar de volta para o ecrã de login
+
             } catch (error) {
+                // Manter o erro antigo
                 registerError.classList.add('text-red-500');
                 registerError.classList.remove('text-green-600', 'dark:text-green-400');
                 registerError.textContent = `Erro ao registar: ${error.message}`;
@@ -1451,6 +1590,7 @@
                 registerButton.disabled = false; registerButton.textContent = 'Criar Conta';
             }
         }
+        
         async function handleLogout() {
             try { await signOut(auth); }
             catch (error) { console.error("Erro ao sair:", error); }
